@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Direct Democracy</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; }
+    h1 { color: #1a365d; text-align: center; }
+    .bill { background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .federal { border-left: 5px solid #e53e3e; }
+    .state { border-left: 5px solid #38a169; }
+    .county { border-left: 5px solid #3182ce; }
+    .municipal { border-left: 5px solid #805ad5; }
+    .bill h2 { margin-top: 0; color: #2d3748; }
+    .bill p { color: #4a5568; }
+    .deadline { font-weight: bold; color: #d69e2e; }
+    .vote-buttons { margin-top: 15px; }
+    button { padding: 8px 15px; margin-right: 10px; border: none; border-radius: 4px; cursor: pointer; }
+    .yes-btn { background-color: #38a169; color: white; }
+    .no-btn { background-color: #e53e3e; color: white; }
+    .voted { opacity: 0.6; }
+    .participation { font-style: italic; color: #718096; }
+    .result { display: none; margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Direct Democracy</h1>
+  <p>Your voice matters. Vote on the issues that affect you.</p>
+
+  <div class="bill federal" id="bill1">
+    <h2>Climate Action and Green Jobs Act</h2>
+    <p>Establishes a national green jobs program, invests in renewable energy infrastructure, and sets ambitious carbon reduction targets.</p>
+    <p class="deadline">Vote by December 1, 2024</p>
+    <p class="participation">53% participation so far</p>
+    <div class="vote-buttons">
+      <button class="yes-btn" onclick="voteYes(1)">Yes</button>
+      <button class="no-btn" onclick="voteNo(1)">No</button>
+    </div>
+    <div class="result" id="result1">Current votes: <span id="count1">Loading...</span></div>
+  </div>
+
+  <div class="bill state" id="bill2">
+    <h2>Digital Privacy Protection Act</h2>
+    <p>Strengthens data protection laws, requires explicit consent for data collection, and establishes penalties for companies that misuse personal information.</p>
+    <p class="deadline">Vote by November 20, 2024</p>
+    <p class="participation">61% participation so far</p>
+    <div class="vote-buttons">
+      <button class="yes-btn" onclick="voteYes(2)">Yes</button>
+      <button class="no-btn" onclick="voteNo(2)">No</button>
+    </div>
+    <div class="result" id="result2">Current votes: <span id="count2">Loading...</span></div>
+  </div>
+
+  <div class="bill federal" id="bill3">
+    <h2>Federal Education Funding Act</h2>
+    <p>Proposes a $50 billion increase in federal education funding over the next 5 years, focusing on STEM programs and teacher training.</p>
+    <p class="deadline">Vote by November 5, 2024</p>
+    <p class="participation">68% participation so far</p>
+    <div class="vote-buttons">
+      <button class="yes-btn" onclick="voteYes(3)">Yes</button>
+      <button class="no-btn" onclick="voteNo(3)">No</button>
+    </div>
+    <div class="result" id="result3">Current votes: <span id="count3">Loading...</span></div>
+  </div>
+
+  <script>
+    function voteYes(billId) {
+      localStorage.setItem(`vote_${billId}`, 'yes');
+      document.getElementById(`bill${billId}`).classList.add('voted');
+      updateResults();
+    }
+    function voteNo(billId) {
+      localStorage.setItem(`vote_${billId}`, 'no');
+      document.getElementById(`bill${billId}`).classList.add('voted');
+      updateResults();
+    }
+    function updateResults() {
+      const bills = [
+        { id: 1, deadline: new Date('2024-12-01') },
+        { id: 2, deadline: new Date('2024-11-20') },
+        { id: 3, deadline: new Date('2024-11-05') }
+      ];
+      bills.forEach(bill => {
+        if (new Date() >= bill.deadline) {
+          document.getElementById(`result${bill.id}`).style.display = 'block';
+          document.getElementById(`count${bill.id}`).textContent = 
+            localStorage.getItem(`vote_${bill.id}`) ? '62% YES' : 'Voting closed';
+        }
+        if (localStorage.getItem(`vote_${bill.id}`)) {
+          document.getElementById(`bill${bill.id}`).classList.add('voted');
+        }
+      });
+    }
+    window.onload = updateResults;
+  </script>
+</body>
+</html>
