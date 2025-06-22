@@ -4,68 +4,355 @@
   <title>Direct Democracy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {font-family: Arial; max-width:600px; margin:0 auto; padding:20px; background:#f5f5f5}
-    .header {text-align:center; margin-bottom:30px}
-    h1 {color:#1a365d}
-    .stats {display:flex; justify-content:space-around; margin:30px 0; text-align:center}
-    .stat-box {background:white; padding:15px; border-radius:8px; width:28%}
-    .stat-number {font-size:2em; font-weight:bold}
-    .nav-menu {display:flex; list-style:none; padding:0; justify-content:space-around; background:white; padding:15px; border-radius:8px}
-    .page {display:none}
-    .active {display:block}
-    .bill {background:white; border-radius:8px; padding:15px; margin-bottom:15px}
-    .federal {border-left:5px solid #e53e3e}
-    .state {border-left:5px solid #38a169}
-    button {padding:8px 15px; border:none; border-radius:4px; color:white}
-    .yes-btn {background:#38a169}
-    .no-btn {background:#e53e3e}
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      display: flex;
+    }
+    
+    /* Vertical Navigation */
+    .nav-menu {
+      width: 120px;
+      background: white;
+      padding: 20px 10px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      height: 100vh;
+      position: fixed;
+    }
+    .nav-menu li {
+      list-style: none;
+      padding: 12px 0;
+      text-align: center;
+      font-size: 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+    }
+    .nav-menu li.active {
+      font-weight: bold;
+      color: #1a365d;
+    }
+    
+    /* Main Content */
+    .main-content {
+      margin-left: 140px;
+      padding: 20px;
+      width: calc(100% - 160px);
+    }
+    
+    /* Home Page */
+    .home-page {
+      text-align: center;
+      padding-top: 40px;
+    }
+    .home-page h1 {
+      color: #1a365d;
+      font-size: 1.8em;
+    }
+    
+    /* Legislation Page */
+    .bill {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .federal { border-left: 5px solid #e53e3e; }
+    .state { border-left: 5px solid #38a169; }
+    .bill h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+      color: #2d3748;
+    }
+    .bill p {
+      font-size: 0.9em;
+      color: #4a5568;
+    }
+    .deadline {
+      font-weight: bold;
+      color: #d69e2e;
+      font-size: 0.8em;
+    }
+    .participation {
+      font-style: italic;
+      color: #718096;
+      font-size: 0.8em;
+    }
+    
+    /* Swipe Voting */
+    .swipe-area {
+      height: 60px;
+      background: #f0f4f8;
+      border-radius: 4px;
+      margin-top: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+    .swipe-card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      touch-action: pan-y;
+      user-select: none;
+    }
+    .swipe-yes, .swipe-no {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      opacity: 0;
+    }
+    .swipe-yes {
+      left: 0;
+      background: rgba(56, 161, 105, 0.3);
+    }
+    .swipe-no {
+      right: 0;
+      background: rgba(229, 62, 62, 0.3);
+    }
+    
+    /* Wiki Page */
+    .wiki-page {
+      display: none;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .comment {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      font-size: 0.9em;
+    }
+    .comment-author {
+      font-weight: bold;
+      color: #1a365d;
+    }
+    
+    /* Other Pages */
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>Direct Democracy</h1>
-    <p>Your voice matters. Vote on the issues that affect you.</p>
-  </div>
-  
+  <!-- Vertical Navigation Menu -->
   <ul class="nav-menu">
-    <li onclick="showPage('home')">Home</li>
+    <li class="active" onclick="showPage('home')">Home</li>
     <li onclick="showPage('legislation')">Legislation</li>
     <li onclick="showPage('seats')">Seats</li>
+    <li onclick="showPage('representative')">My Representative</li>
+    <li onclick="showPage('votes')">My Votes</li>
+    <li onclick="showPage('profile')">My Profile</li>
+    <li onclick="showPage('support')">Support</li>
   </ul>
-  
-  <div id="home" class="page active">
-    <div class="stats">
-      <div class="stat-box">
-        <div class="stat-number">5</div>
-        <div>Active Bills</div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Home Page -->
+    <div id="home" class="page active home-page">
+      <h1>Direct Democracy</h1>
+      <p>Your voice matters. Vote on the issues that affect you.</p>
+    </div>
+
+    <!-- Legislation Page -->
+    <div id="legislation" class="page">
+      <div class="stats">
+        <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+          <div style="text-align: center">
+            <div style="font-size: 1.5em; font-weight: bold">5</div>
+            <div style="font-size: 0.8em">Active Bills</div>
+          </div>
+          <div style="text-align: center">
+            <div style="font-size: 1.5em; font-weight: bold">0</div>
+            <div style="font-size: 0.8em">Your Votes</div>
+          </div>
+          <div style="text-align: center">
+            <div style="font-size: 1.5em; font-weight: bold">0%</div>
+            <div style="font-size: 0.8em">Participation</div>
+          </div>
+        </div>
       </div>
-      <div class="stat-box">
-        <div class="stat-number">0</div>
-        <div>Your Votes</div>
+      
+      <!-- Clickable Bill -->
+      <div class="bill federal" onclick="showWiki('bill1')" style="cursor: pointer;">
+        <h2>Climate Action and Green Jobs Act</h2>
+        <p>Establishes a national green jobs program, invests in renewable energy infrastructure.</p>
+        <p class="deadline">Vote by December 1, 2024</p>
+        <p class="participation">53% participation so far</p>
       </div>
-      <div class="stat-box">
-        <div class="stat-number">0%</div>
-        <div>Participation</div>
+      
+      <!-- Swipeable Bill -->
+      <div class="bill state" id="swipe-bill">
+        <h2>Digital Privacy Protection Act</h2>
+        <p>Strengthens data protection laws and requires explicit consent for data collection.</p>
+        <p class="deadline">Vote by November 20, 2024</p>
+        <p class="participation">61% participation so far</p>
+        
+        <div class="swipe-area" id="swipe-area">
+          <div class="swipe-yes">YES</div>
+          <div class="swipe-no">NO</div>
+          <div class="swipe-card" id="swipe-card">Swipe left or right to vote</div>
+        </div>
       </div>
     </div>
-  </div>
-  
-  <div id="legislation" class="page">
-    <div class="bill federal">
+    
+    <!-- Wiki Page (Hidden) -->
+    <div id="wiki-bill1" class="wiki-page">
       <h2>Climate Action and Green Jobs Act</h2>
-      <p>Establishes a national green jobs program.</p>
-      <p><strong>Vote by December 1, 2024</strong></p>
-      <p>53% participation</p>
-      <button class="yes-btn">Yes</button>
-      <button class="no-btn">No</button>
+      <p><strong>Summary:</strong> This bill allocates $50 billion over 10 years to create renewable energy jobs while phasing out coal plants.</p>
+      
+      <h3>Community Discussion</h3>
+      <div class="comment">
+        <div class="comment-author">Environmentalist123:</div>
+        <p>This is exactly what our country needs to combat climate change!</p>
+      </div>
+      <div class="comment">
+        <div class="comment-author">CoalWorker45:</div>
+        <p>Concerned about job transitions in my district. Needs more worker protections.</p>
+      </div>
+      <div class="comment">
+        <div class="comment-author">EconomistJane:</div>
+        <p>Analysis shows this will create 2.3 million new jobs by 2030.</p>
+      </div>
+      
+      <button onclick="hideWiki()" style="margin-top: 20px; padding: 8px 15px; background: #1a365d; color: white; border: none; border-radius: 4px;">Back to Bills</button>
+    </div>
+
+    <!-- Other Pages -->
+    <div id="seats" class="page">
+      <h2>Your Districts</h2>
+      <p>Federal District 12</p>
+      <p>State Assembly District 5</p>
+      <p>County Precinct 8</p>
+    </div>
+    
+    <div id="representative" class="page">
+      <h2>Your Representative</h2>
+      <p><strong>Federal:</strong> Rep. Maria Gonzalez (D)</p>
+      <p><strong>State:</strong> Assemblymember James Wilson (R)</p>
+    </div>
+    
+    <div id="votes" class="page">
+      <h2>Your Voting History</h2>
+      <p>No votes recorded yet</p>
+    </div>
+    
+    <div id="profile" class="page">
+      <h2>My Profile</h2>
+      <p><strong>Name:</strong> User</p>
+      <p><strong>District:</strong> Federal District 12</p>
+      <p><strong>Member Since:</strong> 2024</p>
+    </div>
+    
+    <div id="support" class="page">
+      <h2>Support</h2>
+      <p>Email: help@directdemocracy.org</p>
+      <p>Phone: (555) 123-4567</p>
     </div>
   </div>
-  
+
   <script>
+    // Navigation
     function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      // Update active nav item
+      document.querySelectorAll('.nav-menu li').forEach(item => {
+        item.classList.remove('active');
+      });
+      document.querySelector(`.nav-menu li[onclick="showPage('${pageId}')"]`).classList.add('active');
+      
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      
+      // Show selected page
       document.getElementById(pageId).classList.add('active');
     }
+    
+    // Wiki Page
+    function showWiki(billId) {
+      document.getElementById('legislation').classList.remove('active');
+      document.getElementById(`wiki-${billId}`).classList.add('active');
+    }
+    
+    function hideWiki() {
+      document.querySelectorAll('.wiki-page').forEach(wiki => {
+        wiki.classList.remove('active');
+      });
+      document.getElementById('legislation').classList.add('active');
+    }
+    
+    // Swipe Voting
+    const swipeCard = document.getElementById('swipe-card');
+    const swipeArea = document.getElementById('swipe-area');
+    let startX, moveX;
+    
+    swipeCard.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+    }, {passive: true});
+    
+    swipeCard.addEventListener('touchmove', (e) => {
+      moveX = e.touches[0].clientX;
+      const diff = moveX - startX;
+      
+      if (diff > 0) {
+        // Swiping right (YES)
+        swipeCard.style.transform = `translateX(${diff}px)`;
+        document.querySelector('.swipe-yes').style.opacity = Math.min(1, diff / 100);
+      } else {
+        // Swiping left (NO)
+        swipeCard.style.transform = `translateX(${diff}px)`;
+        document.querySelector('.swipe-no').style.opacity = Math.min(1, -diff / 100);
+      }
+    }, {passive: true});
+    
+    swipeCard.addEventListener('touchend', (e) => {
+      const diff = moveX - startX;
+      
+      if (Math.abs(diff) > 100) { // Threshold for successful swipe
+        if (diff > 0) {
+          // Voted YES
+          swipeCard.textContent = "Voted YES ✓";
+          swipeCard.style.background = "#38a169";
+          swipeCard.style.color = "white";
+        } else {
+          // Voted NO
+          swipeCard.textContent = "Voted NO ✗";
+          swipeCard.style.background = "#e53e3e";
+          swipeCard.style.color = "white";
+        }
+        
+        // Disable further voting
+        swipeCard.style.transform = "translateX(0)";
+        swipeCard.removeAttribute('style');
+        document.querySelector('.swipe-yes').style.opacity = 0;
+        document.querySelector('.swipe-no').style.opacity = 0;
+      } else {
+        // Return to center
+        swipeCard.style.transform = "translateX(0)";
+        document.querySelector('.swipe-yes').style.opacity = 0;
+        document.querySelector('.swipe-no').style.opacity = 0;
+      }
+    }, {passive: true});
   </script>
 </body>
 </html>
