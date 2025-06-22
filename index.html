@@ -2,332 +2,70 @@
 <html>
 <head>
   <title>Direct Democracy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    /* Global Styles */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
-    /* Homepage Styles */
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .header h1 {
-      color: #1a365d;
-      font-size: 2.5em;
-    }
-    .stats {
-      display: flex;
-      justify-content: space-around;
-      margin: 30px 0;
-      text-align: center;
-    }
-    .stat-box {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      width: 28%;
-    }
-    .stat-number {
-      font-size: 2em;
-      font-weight: bold;
-      color: #2d3748;
-    }
-    .stat-label {
-      color: #718096;
-    }
-    
-    /* Navigation */
-    .nav-tabs {
-      display: flex;
-      list-style: none;
-      padding: 0;
-      border-bottom: 1px solid #e2e8f0;
-      margin-bottom: 20px;
-    }
-    .nav-tabs li {
-      padding: 10px 20px;
-      cursor: pointer;
-    }
-    .nav-tabs li.active {
-      border-bottom: 3px solid #1a365d;
-      font-weight: bold;
-    }
-    
-    /* Voting Interface (Existing Styles) */
-    .bill {
-      background: white;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .federal { border-left: 5px solid #e53e3e; }
-    .state { border-left: 5px solid #38a169; }
-    .county { border-left: 5px solid #3182ce; }
-    .municipal { border-left: 5px solid #805ad5; }
-    .bill h2 { margin-top: 0; color: #2d3748; }
-    .bill p { color: #4a5568; }
-    .deadline { font-weight: bold; color: #d69e2e; }
-    .vote-buttons { margin-top: 15px; }
-    button {
-      padding: 8px 15px;
-      margin-right: 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .yes-btn { background-color: #38a169; color: white; }
-    .no-btn { background-color: #e53e3e; color: white; }
-    .voted { opacity: 0.6; }
-    .participation { font-style: italic; color: #718096; }
-    .result { display: none; margin-top: 10px; font-weight: bold; }
-    
-    /* Hide non-active tabs */
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    body {font-family: Arial; max-width:600px; margin:0 auto; padding:20px; background:#f5f5f5}
+    .header {text-align:center; margin-bottom:30px}
+    h1 {color:#1a365d}
+    .stats {display:flex; justify-content:space-around; margin:30px 0; text-align:center}
+    .stat-box {background:white; padding:15px; border-radius:8px; width:28%}
+    .stat-number {font-size:2em; font-weight:bold}
+    .nav-menu {display:flex; list-style:none; padding:0; justify-content:space-around; background:white; padding:15px; border-radius:8px}
+    .page {display:none}
+    .active {display:block}
+    .bill {background:white; border-radius:8px; padding:15px; margin-bottom:15px}
+    .federal {border-left:5px solid #e53e3e}
+    .state {border-left:5px solid #38a169}
+    button {padding:8px 15px; border:none; border-radius:4px; color:white}
+    .yes-btn {background:#38a169}
+    .no-btn {background:#e53e3e}
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Homepage (Matches Whiteboard) -->
-    <div class="header">
-      <h1>Direct Democracy</h1>
-      <p>Your voice matters. Vote on the issues that affect you.</p>
-    </div>
-    
+  <div class="header">
+    <h1>Direct Democracy</h1>
+    <p>Your voice matters. Vote on the issues that affect you.</p>
+  </div>
+  
+  <ul class="nav-menu">
+    <li onclick="showPage('home')">Home</li>
+    <li onclick="showPage('legislation')">Legislation</li>
+    <li onclick="showPage('seats')">Seats</li>
+  </ul>
+  
+  <div id="home" class="page active">
     <div class="stats">
       <div class="stat-box">
         <div class="stat-number">5</div>
-        <div class="stat-label">Active Bills</div>
+        <div>Active Bills</div>
       </div>
       <div class="stat-box">
         <div class="stat-number">0</div>
-        <div class="stat-label">Your Votes</div>
+        <div>Your Votes</div>
       </div>
       <div class="stat-box">
         <div class="stat-number">0%</div>
-        <div class="stat-label">Participation</div>
+        <div>Participation</div>
       </div>
-    </div>
-    
-    <ul class="nav-tabs">
-      <li class="active" onclick="showTab('legislation')">Legislation</li>
-      <li onclick="showTab('seats')">Seats</li>
-      <li onclick="showTab('representative')">My Representative</li>
-      <li onclick="showTab('votes')">My Votes</li>
-      <li onclick="showTab('profile')">Profile</li>
-    </ul>
-    
-    <!-- Tab Contents -->
-    <div id="legislation" class="tab-content active">
-      <!-- Voting Interface -->
-      <div class="bill federal" id="bill1">
-        <h2>Climate Action and Green Jobs Act</h2>
-        <p>Establishes a national green jobs program, invests in renewable energy infrastructure.</p>
-        <p class="deadline">Vote by December 1, 2024</p>
-        <p class="participation">53% participation so far</p>
-        <div class="vote-buttons">
-          <button class="yes-btn" onclick="voteYes(1)">Yes</button>
-          <button class="no-btn" onclick="voteNo(1)">No</button>
-        </div>
-        <div class="result" id="result1">Current votes: <span id="count1">Loading...</span></div>
-      </div>
-      
-      <div class="bill state" id="bill2">
-        <h2>Digital Privacy Protection Act</h2>
-        <p>Strengthens data protection laws and requires explicit consent for data collection.</p>
-        <p class="deadline">Vote by November 20, 2024</p>
-        <p class="participation">61% participation so far</p>
-        <div class="vote-buttons">
-          <button class="yes-btn" onclick="voteYes(2)">Yes</button>
-          <button class="no-btn" onclick="voteNo(2)">No</button>
-        </div>
-        <div class="result" id="result2">Current votes: <span id="count2">Loading...</span></div>
-      </div>
-    </div>
-    
-    <!-- Placeholder for Other Tabs -->
-    <div id="seats" class="tab-content">
-      <h2>Your Districts</h2>
-      <p>Content coming soon</p>
-    </div>
-    <div id="representative" class="tab-content">
-      <h2>Your Representative</h2>
-      <p>Content coming soon</p>
-    </div>
-    <div id="votes" class="tab-content">
-      <h2>Your Voting History</h2>
-      <p>Content coming soon</p>
-    </div>
-    <div id="profile" class="tab-content">
-      <h2>Your Profile</h2>
-      <p>Content coming soon</p>
     </div>
   </div>
-
+  
+  <div id="legislation" class="page">
+    <div class="bill federal">
+      <h2>Climate Action and Green Jobs Act</h2>
+      <p>Establishes a national green jobs program.</p>
+      <p><strong>Vote by December 1, 2024</strong></p>
+      <p>53% participation</p>
+      <button class="yes-btn">Yes</button>
+      <button class="no-btn">No</button>
+    </div>
+  </div>
+  
   <script>
-    // Voting Functions
-    function voteYes(billId) {
-      localStorage.setItem(`vote_${billId}`, 'yes');
-      document.getElementById(`bill${billId}`).classList.add('voted');
-      updateResults();
-      updateStats();
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
     }
-    function voteNo(billId) {
-      localStorage.setItem(`vote_${billId}`, 'no');
-      document.getElementById(`bill${billId}`).classList.add('voted');
-      updateResults();
-      updateStats();
-    }
-    
-    // Tab Navigation
-    function showTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      document.querySelectorAll('.nav-tabs li').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      document.getElementById(tabId).classList.add('active');
-      document.querySelector(`.nav-tabs li[onclick="showTab('${tabId}')"]`).classList.add('active');
-    }
-    
-    // Initialize
-    function updateResults() {
-      const bills = [
-        { id: 1, deadline: new Date('2024-12-01') },
-        { id: 2, deadline: new Date('2024-11-20') }
-      ];
-      bills.forEach(bill => {
-        if (new Date() >= bill.deadline) {
-          document.getElementById(`result${bill.id}`).style.display = 'block';
-          document.getElementById(`count${bill.id}`).textContent = 
-            localStorage.getItem(`vote_${bill.id}`) ? '62% YES' : 'Voting closed';
-        }
-        if (localStorage.getItem(`vote_${bill.id}`)) {
-          document.getElementById(`bill${bill.id}`).classList.add('voted');
-        }
-      });
-    }
-    
-    function updateStats() {
-      const voteCount = Object.keys(localStorage).filter(key => key.startsWith('vote_')).length;
-      document.querySelector('.stat-number:nth-child(1)').textContent = '2'; // Hardcoded active bills
-      document.querySelector('.stat-number:nth-child(2)').textContent = voteCount;
-      document.querySelector('.stat-number:nth-child(3)').textContent = 
-        Math.floor((voteCount / 2) * 100) + '%'; // 2 is total bills
-    }
-    
-    window.onload = function() {
-      updateResults();
-      updateStats();
-    };
-  </script>
-</body>
-</html><!DOCTYPE html>
-<html>
-<head>
-  <title>Direct Democracy</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; }
-    h1 { color: #1a365d; text-align: center; }
-    .bill { background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .federal { border-left: 5px solid #e53e3e; }
-    .state { border-left: 5px solid #38a169; }
-    .county { border-left: 5px solid #3182ce; }
-    .municipal { border-left: 5px solid #805ad5; }
-    .bill h2 { margin-top: 0; color: #2d3748; }
-    .bill p { color: #4a5568; }
-    .deadline { font-weight: bold; color: #d69e2e; }
-    .vote-buttons { margin-top: 15px; }
-    button { padding: 8px 15px; margin-right: 10px; border: none; border-radius: 4px; cursor: pointer; }
-    .yes-btn { background-color: #38a169; color: white; }
-    .no-btn { background-color: #e53e3e; color: white; }
-    .voted { opacity: 0.6; }
-    .participation { font-style: italic; color: #718096; }
-    .result { display: none; margin-top: 10px; font-weight: bold; }
-  </style>
-</head>
-<body>
-  <h1>Direct Democracy</h1>
-  <p>Your voice matters. Vote on the issues that affect you.</p>
-
-  <div class="bill federal" id="bill1">
-    <h2>Climate Action and Green Jobs Act</h2>
-    <p>Establishes a national green jobs program, invests in renewable energy infrastructure, and sets ambitious carbon reduction targets.</p>
-    <p class="deadline">Vote by December 1, 2024</p>
-    <p class="participation">53% participation so far</p>
-    <div class="vote-buttons">
-      <button class="yes-btn" onclick="voteYes(1)">Yes</button>
-      <button class="no-btn" onclick="voteNo(1)">No</button>
-    </div>
-    <div class="result" id="result1">Current votes: <span id="count1">Loading...</span></div>
-  </div>
-
-  <div class="bill state" id="bill2">
-    <h2>Digital Privacy Protection Act</h2>
-    <p>Strengthens data protection laws, requires explicit consent for data collection, and establishes penalties for companies that misuse personal information.</p>
-    <p class="deadline">Vote by November 20, 2024</p>
-    <p class="participation">61% participation so far</p>
-    <div class="vote-buttons">
-      <button class="yes-btn" onclick="voteYes(2)">Yes</button>
-      <button class="no-btn" onclick="voteNo(2)">No</button>
-    </div>
-    <div class="result" id="result2">Current votes: <span id="count2">Loading...</span></div>
-  </div>
-
-  <div class="bill federal" id="bill3">
-    <h2>Federal Education Funding Act</h2>
-    <p>Proposes a $50 billion increase in federal education funding over the next 5 years, focusing on STEM programs and teacher training.</p>
-    <p class="deadline">Vote by November 5, 2024</p>
-    <p class="participation">68% participation so far</p>
-    <div class="vote-buttons">
-      <button class="yes-btn" onclick="voteYes(3)">Yes</button>
-      <button class="no-btn" onclick="voteNo(3)">No</button>
-    </div>
-    <div class="result" id="result3">Current votes: <span id="count3">Loading...</span></div>
-  </div>
-
-  <script>
-    function voteYes(billId) {
-      localStorage.setItem(`vote_${billId}`, 'yes');
-      document.getElementById(`bill${billId}`).classList.add('voted');
-      updateResults();
-    }
-    function voteNo(billId) {
-      localStorage.setItem(`vote_${billId}`, 'no');
-      document.getElementById(`bill${billId}`).classList.add('voted');
-      updateResults();
-    }
-    function updateResults() {
-      const bills = [
-        { id: 1, deadline: new Date('2024-12-01') },
-        { id: 2, deadline: new Date('2024-11-20') },
-        { id: 3, deadline: new Date('2024-11-05') }
-      ];
-      bills.forEach(bill => {
-        if (new Date() >= bill.deadline) {
-          document.getElementById(`result${bill.id}`).style.display = 'block';
-          document.getElementById(`count${bill.id}`).textContent = 
-            localStorage.getItem(`vote_${bill.id}`) ? '62% YES' : 'Voting closed';
-        }
-        if (localStorage.getItem(`vote_${bill.id}`)) {
-          document.getElementById(`bill${bill.id}`).classList.add('voted');
-        }
-      });
-    }
-    window.onload = updateResults;
   </script>
 </body>
 </html>
