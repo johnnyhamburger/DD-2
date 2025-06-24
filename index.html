@@ -48,36 +48,17 @@
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       cursor: pointer;
+      transition: transform 0.2s;
     }
     .bill:hover {
-      background: #f8f9fa;
+      transform: translateY(-2px);
     }
     .federal { border-left: 5px solid #e53e3e; }
     .state { border-left: 5px solid #38a169; }
     .county { border-left: 5px solid #3182ce; }
     
-    /* Swipe Area */
-    .swipe-area {
-      height: 60px;
-      background: #f0f4f8;
-      margin-top: 15px;
-      position: relative;
-      overflow: hidden;
-      border-radius: 4px;
-    }
-    .swipe-card {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: white;
-      touch-action: pan-y;
-    }
-    
     /* Wiki Pages */
-    .wiki {
+    .wiki-page {
       display: none;
       position: fixed;
       top: 0;
@@ -89,6 +70,10 @@
       overflow-y: auto;
       z-index: 100;
     }
+    .wiki-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
     .back-btn {
       padding: 8px 15px;
       background: #1a365d;
@@ -97,6 +82,20 @@
       border-radius: 4px;
       margin-top: 20px;
       cursor: pointer;
+    }
+    .comment {
+      padding: 15px;
+      margin: 10px 0;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    .comment-author {
+      font-weight: bold;
+      color: #1a365d;
+    }
+    .comment-date {
+      color: #718096;
+      font-size: 0.8em;
     }
     
     /* Pages */
@@ -143,28 +142,90 @@
         <p><small>Vote by Nov 20, 2024 • 61% participation</small></p>
       </div>
       
-      <!-- Swipeable Bill -->
-      <div class="bill county">
+      <!-- Clickable Bill 3 -->
+      <div class="bill county" onclick="showWiki('parks')">
         <h2>Parks Expansion</h2>
         <p>Funds new parkland acquisition.</p>
         <p><small>Vote by Oct 15, 2024 • 42% participation</small></p>
-        <div class="swipe-area" id="swipe-area">
-          <div class="swipe-card" id="swipe-card">Swipe left/right to vote</div>
+      </div>
+    </div>
+
+    <!-- Wiki Page for Climate Bill -->
+    <div id="wiki-climate" class="wiki-page">
+      <div class="wiki-content">
+        <h2>Climate Action and Green Jobs Act</h2>
+        <p><strong>Summary:</strong> This bill allocates $50 billion over 10 years to transition to renewable energy while creating millions of jobs. Key provisions include tax incentives for solar/wind development, worker retraining programs, and grants for affected communities.</p>
+        
+        <h3>Full Text Preview</h3>
+        <p>Section 1: Establishment of Green Jobs Training Program...<br>
+        Section 2: Renewable Energy Tax Credits...<br>
+        Section 3: Fossil Fuel Worker Transition Fund...</p>
+        <button class="back-btn" onclick="hideWiki()">Back to Bills</button>
+        
+        <h3>Community Comments</h3>
+        <div class="comment">
+          <div class="comment-author">Environmentalist123</div>
+          <div class="comment-date">Posted 3 days ago • 42 upvotes</div>
+          <p>This is exactly what we need to combat climate change while supporting workers!</p>
+        </div>
+        <div class="comment">
+          <div class="comment-author">CoalWorker45</div>
+          <div class="comment-date">Posted 2 days ago • 15 upvotes</div>
+          <p>Concerned about the timeline - we need stronger job guarantees before plant closures.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Wiki Page for Privacy Bill -->
+    <div id="wiki-privacy" class="wiki-page">
+      <div class="wiki-content">
+        <h2>Digital Privacy Protection Act</h2>
+        <p><strong>Summary:</strong> Establishes strong consumer data protections requiring explicit opt-in consent before collecting personal information. Creates a Digital Privacy Commission to enforce regulations with significant fines for violations.</p>
+        
+        <h3>Full Text Preview</h3>
+        <p>Section 1: Consumer Data Rights...<br>
+        Section 2: Establishment of Privacy Commission...<br>
+        Section 3: Right to Be Forgotten...</p>
+        <button class="back-btn" onclick="hideWiki()">Back to Bills</button>
+        
+        <h3>Community Comments</h3>
+        <div class="comment">
+          <div class="comment-author">TechPrivacyAdvocate</div>
+          <div class="comment-date">Posted 5 days ago • 37 upvotes</div>
+          <p>Finally! These protections match the EU's GDPR standards we've needed for years.</p>
+        </div>
+        <div class="comment">
+          <div class="comment-author">SmallBizOwner</div>
+          <div class="comment-date">Posted 4 days ago • 12 upvotes</div>
+          <p>The compliance costs worry me - small businesses need support to implement these changes.</p>
         </div>
       </div>
     </div>
 
-    <!-- Wiki Pages -->
-    <div id="wiki-climate" class="wiki">
-      <h2>Climate Action Act</h2>
-      <p>Detailed information about this bill...</p>
-      <button class="back-btn" onclick="hideWiki()">Back to Bills</button>
-    </div>
-    
-    <div id="wiki-privacy" class="wiki">
-      <h2>Privacy Protection Act</h2>
-      <p>Detailed information about this bill...</p>
-      <button class="back-btn" onclick="hideWiki()">Back to Bills</button>
+    <!-- Wiki Page for Parks Bill -->
+    <div id="wiki-parks" class="wiki-page">
+      <div class="wiki-content">
+        <h2>County Parks Expansion Initiative</h2>
+        <p><strong>Summary:</strong> Allocates $15 million to acquire 500 acres of new parkland and improve existing facilities with new trails, playgrounds, and picnic areas.</p>
+        
+        <h3>Full Text Preview</h3>
+        <p>Section 1: Land Acquisition Fund...<br>
+        Section 2: Facility Improvement Grants...<br>
+        Section 3: Maintenance Budget...</p>
+        <button class="back-btn" onclick="hideWiki()">Back to Bills</button>
+        
+        <h3>Community Comments</h3>
+        <div class="comment">
+          <div class="comment-author">OutdoorEnthusiast</div>
+          <div class="comment-date">Posted 1 week ago • 28 upvotes</div>
+          <p>This will be amazing for families and outdoor recreation in our county!</p>
+        </div>
+        <div class="comment">
+          <div class="comment-author">TaxpayerAdvocate</div>
+          <div class="comment-date">Posted 6 days ago • 8 upvotes</div>
+          <p>Concerned about the ongoing maintenance costs - has this been fully budgeted?</p>
+        </div>
+      </div>
     </div>
 
     <!-- Other Pages -->
@@ -176,17 +237,20 @@
     <div id="profile" class="page">
       <h2>My Profile</h2>
       <p>Name: User</p>
+      <p>District: Federal District 12</p>
       <p>Member since: 2024</p>
     </div>
     
     <div id="representative" class="page">
       <h2>My Representative</h2>
-      <p>Rep. Jane Smith</p>
+      <p>Federal: Rep. Maria Gonzalez (D)</p>
+      <p>State: Assemblymember James Wilson (R)</p>
     </div>
     
     <div id="support" class="page">
       <h2>Support</h2>
       <p>Email: help@directdemocracy.org</p>
+      <p>Phone: (555) 123-4567</p>
     </div>
   </div>
 
@@ -205,6 +269,9 @@
         item.classList.remove('active');
       });
       document.querySelector(`.nav-item[onclick="showPage('${pageId}')"]`).classList.add('active');
+      
+      // Hide any wiki pages
+      hideWiki();
     }
 
     // Wiki Pages
@@ -212,34 +279,13 @@
       document.getElementById(wikiId).style.display = 'block';
     }
     function hideWiki() {
-      document.querySelectorAll('.wiki').forEach(wiki => {
+      document.querySelectorAll('.wiki-page').forEach(wiki => {
         wiki.style.display = 'none';
       });
     }
 
-    // Swipe Functionality
-    const swipeCard = document.getElementById('swipe-card');
-    let startX, moveX;
-    
-    swipeCard.addEventListener('touchstart', (e) => {
-      startX = e.touches[0].clientX;
-    }, {passive: true});
-    
-    swipeCard.addEventListener('touchmove', (e) => {
-      moveX = e.touches[0].clientX;
-      const diff = moveX - startX;
-      swipeCard.style.transform = `translateX(${diff}px)`;
-    }, {passive: true});
-    
-    swipeCard.addEventListener('touchend', () => {
-      const diff = moveX - startX;
-      if (Math.abs(diff) > 100) { // Minimum swipe distance
-        swipeCard.textContent = diff > 0 ? "Voted YES ✓" : "Voted NO ✗";
-        swipeCard.style.background = diff > 0 ? "#38a169" : "#e53e3e";
-        swipeCard.style.color = "white";
-      }
-      swipeCard.style.transform = "translateX(0)";
-    }, {passive: true});
+    // Initialize - show home page
+    showPage('home');
   </script>
 </body>
 </html>
