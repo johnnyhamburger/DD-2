@@ -4,376 +4,180 @@
   <title>Direct Democracy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    /* Global Styles */
-    body {
+    /* Simplified CSS to ensure reliability */
+    body { 
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f5f5f5;
-      display: flex;
-      min-height: 100vh;
+      background: #f5f5f5;
     }
-    
-    /* Vertical Navigation */
-    .nav-menu {
-      width: 120px;
-      background: white;
-      padding: 20px 10px;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      height: 100vh;
-      position: fixed;
-    }
-    .nav-menu li {
-      list-style: none;
-      padding: 12px 0;
-      text-align: center;
-      font-size: 14px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-    }
-    .nav-menu li.active {
-      font-weight: bold;
-      color: #1a365d;
-    }
-    
-    /* Main Content */
-    .main-content {
-      margin-left: 140px;
-      padding: 20px;
-      width: calc(100% - 160px);
-    }
-    
-    /* Government Level Legend */
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
+    .page { display: none; }
+    .active { display: block; }
+    .nav { 
       background: white;
       padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .legend-item {
       display: flex;
-      align-items: center;
-      font-size: 0.8em;
+      overflow-x: auto;
     }
-    .legend-color {
-      width: 20px;
-      height: 20px;
-      margin-right: 8px;
-      border-radius: 3px;
+    .nav-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      white-space: nowrap;
     }
-    
-    /* Bill Cards */
+    .nav-item.active {
+      font-weight: bold;
+      border-bottom: 3px solid #1a365d;
+    }
     .bill {
       background: white;
-      border-radius: 8px;
+      margin: 15px;
       padding: 15px;
-      margin-bottom: 15px;
+      border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s;
-    }
-    .bill.clickable {
-      cursor: pointer;
-    }
-    .bill.clickable:hover {
-      transform: translateY(-3px);
     }
     .federal { border-left: 5px solid #e53e3e; }
     .state { border-left: 5px solid #38a169; }
     .county { border-left: 5px solid #3182ce; }
     .municipal { border-left: 5px solid #805ad5; }
-    .bill h2 {
-      margin-top: 0;
-      font-size: 1.2em;
-      color: #2d3748;
-    }
-    .bill p {
-      font-size: 0.9em;
-      color: #4a5568;
-      margin-bottom: 8px;
-    }
-    .deadline {
-      font-weight: bold;
-      color: #d69e2e;
-      font-size: 0.8em;
-    }
-    .participation {
-      font-style: italic;
-      color: #718096;
-      font-size: 0.8em;
-    }
-    
-    /* Wiki Page */
-    .wiki-page {
-      display: none;
+    .clickable { cursor: pointer; }
+    .clickable:hover { background: #f8f9fa; }
+    .wiki { 
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: white;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .wiki-header {
-      border-bottom: 1px solid #eee;
-      padding-bottom: 15px;
-      margin-bottom: 15px;
-    }
-    .full-text-link {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 15px;
-      background: #1a365d;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 0.9em;
-    }
-    .comment-section {
-      margin-top: 25px;
-    }
-    .comment {
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .comment-author {
-      font-weight: bold;
-      color: #1a365d;
-      margin-bottom: 5px;
-    }
-    .comment-meta {
-      font-size: 0.8em;
-      color: #718096;
-      margin-bottom: 8px;
-    }
-    .comment-text {
-      font-size: 0.9em;
-      line-height: 1.5;
-    }
-    .back-button {
-      margin-top: 20px;
-      padding: 8px 15px;
-      background: #1a365d;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+      overflow-y: auto;
+      z-index: 100;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <!-- Vertical Navigation Menu -->
-  <ul class="nav-menu">
-    <li class="active" onclick="showPage('home')">Home</li>
-    <li onclick="showPage('legislation')">Legislation</li>
-    <li onclick="showPage('seats')">Seats</li>
-    <li onclick="showPage('representative')">My Representative</li>
-    <li onclick="showPage('votes')">My Votes</li>
-    <li onclick="showPage('profile')">My Profile</li>
-    <li onclick="showPage('support')">Support</li>
-  </ul>
+  <!-- Navigation -->
+  <div class="nav">
+    <div class="nav-item active" onclick="showPage('home')">Home</div>
+    <div class="nav-item" onclick="showPage('legislation')">Legislation</div>
+    <div class="nav-item" onclick="showPage('seats')">Seats</div>
+    <div class="nav-item" onclick="showPage('profile')">Profile</div>
+  </div>
 
-  <!-- Main Content Area -->
-  <div class="main-content">
-    <!-- Home Page -->
-    <div id="home" class="page active">
-      <div class="home-page">
-        <h1>Direct Democracy</h1>
-        <p>Your voice matters. Vote on the issues that affect you.</p>
-      </div>
-    </div>
+  <!-- Home Page -->
+  <div id="home" class="page active">
+    <h1>Direct Democracy</h1>
+    <p>Your voice matters. Vote on the issues that affect you.</p>
+  </div>
 
-    <!-- Legislation Page -->
-    <div id="legislation" class="page">
-      <!-- Government Level Legend -->
-      <div class="legend">
-        <div class="legend-item">
-          <div class="legend-color" style="background: #e53e3e;"></div>
-          <span>Federal</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #38a169;"></div>
-          <span>State</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #3182ce;"></div>
-          <span>County</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #805ad5;"></div>
-          <span>Municipal</span>
-        </div>
-      </div>
-      
-      <!-- Clickable Bill 1 -->
-      <div class="bill federal clickable" onclick="showWiki('bill1')">
-        <h2>Climate Action and Green Jobs Act</h2>
-        <p>Establishes a national green jobs program, invests in renewable energy infrastructure.</p>
-        <p class="deadline">Vote by December 1, 2024</p>
-        <p class="participation">53% participation so far</p>
-      </div>
-      
-      <!-- Clickable Bill 2 -->
-      <div class="bill state clickable" onclick="showWiki('bill2')">
-        <h2>Digital Privacy Protection Act</h2>
-        <p>Strengthens data protection laws and requires explicit consent for data collection.</p>
-        <p class="deadline">Vote by November 20, 2024</p>
-        <p class="participation">61% participation so far</p>
-      </div>
-      
-      <!-- Additional Bills -->
-      <div class="bill county">
-        <h2>County Parks Expansion Initiative</h2>
-        <p>Allocates funds to acquire 500 acres of new parkland and improve existing facilities.</p>
-        <p class="deadline">Vote by October 15, 2024</p>
-        <p class="participation">42% participation so far</p>
-      </div>
-      
-      <div class="bill municipal">
-        <h2>Affordable Housing Ordinance</h2>
-        <p>Requires new developments to include 15% affordable units or pay into housing fund.</p>
-        <p class="deadline">Vote by September 30, 2024</p>
-        <p class="participation">38% participation so far</p>
-      </div>
-      
-      <div class="bill federal">
-        <h2>National Healthcare Reform Act</h2>
-        <p>Expands Medicare coverage and establishes price controls on prescription drugs.</p>
-        <p class="deadline">Vote by January 15, 2025</p>
-        <p class="participation">22% participation so far</p>
-      </div>
+  <!-- Legislation Page -->
+  <div id="legislation" class="page">
+    <div class="bill federal clickable" onclick="showWiki('climate')">
+      <h2>Climate Action Act</h2>
+      <p>Establishes renewable energy programs.</p>
+      <p><small>Vote by Dec 1, 2024 • 53% participation</small></p>
     </div>
     
-    <!-- Wiki Page for Bill 1 -->
-    <div id="wiki-bill1" class="wiki-page">
-      <div class="wiki-header">
-        <h2>Climate Action and Green Jobs Act</h2>
-        <p><strong>Summary:</strong> This comprehensive legislation allocates $50 billion over 10 years to transition the nation to renewable energy while creating millions of jobs in the green economy. Key provisions include tax incentives for solar/wind development, worker retraining programs for fossil fuel industry employees, and grants for communities affected by energy transitions.</p>
-        <a href="#" class="full-text-link">View Full Text of Bill (PDF)</a>
-      </div>
-      
-      <div class="comment-section">
-        <h3>Community Discussion</h3>
-        
-        <div class="comment">
-          <div class="comment-author">Environmentalist123</div>
-          <div class="comment-meta">Posted 3 days ago | 42 upvotes</div>
-          <div class="comment-text">This is exactly what our country needs to combat climate change while supporting workers! The retraining programs are particularly well-designed to help transition fossil fuel workers into the new green economy.</div>
-        </div>
-        
-        <div class="comment">
-          <div class="comment-author">CoalWorker45</div>
-          <div class="comment-meta">Posted 2 days ago | 15 upvotes</div>
-          <div class="comment-text">I'm concerned about the timeline for plant closures. My community depends on the coal plant - we need stronger guarantees of replacement jobs before shutting anything down.</div>
-        </div>
-        
-        <div class="comment">
-          <div class="comment-author">EconomistJane</div>
-          <div class="comment-meta">Posted 1 day ago | 28 upvotes</div>
-          <div class="comment-text">My analysis shows this will create 2.3 million new jobs by 2030 while reducing carbon emissions by 35%. The economic benefits far outweigh the costs.</div>
+    <div class="bill state clickable" onclick="showWiki('privacy')">
+      <h2>Privacy Protection Act</h2>
+      <p>Strengthens data protection laws.</p>
+      <p><small>Vote by Nov 20, 2024 • 61% participation</small></p>
+    </div>
+    
+    <!-- Swipeable Bill -->
+    <div class="bill county" id="swipe-bill">
+      <h2>Parks Expansion</h2>
+      <p>Funds new parkland acquisition.</p>
+      <p><small>Vote by Oct 15, 2024 • 42% participation</small></p>
+      <div id="swipe-area" style="height:60px;background:#f0f4f8;margin-top:10px;position:relative;">
+        <div id="swipe-card" style="position:absolute;width:100%;height:100%;background:white;display:flex;align-items:center;justify-content:center;">
+          Swipe left/right to vote
         </div>
       </div>
-      
-      <button class="back-button" onclick="hideWiki()">Back to Legislation</button>
-    </div>
-    
-    <!-- Wiki Page for Bill 2 -->
-    <div id="wiki-bill2" class="wiki-page">
-      <div class="wiki-header">
-        <h2>Digital Privacy Protection Act</h2>
-        <p><strong>Summary:</strong> This bill establishes strong consumer data protections, requiring companies to obtain explicit opt-in consent before collecting personal information. It creates a new Digital Privacy Commission to enforce regulations and imposes significant fines for violations. The bill also includes a "right to be forgotten" provision allowing users to request data deletion.</p>
-        <a href="#" class="full-text-link">View Full Text of Bill (PDF)</a>
-      </div>
-      
-      <div class="comment-section">
-        <h3>Community Discussion</h3>
-        
-        <div class="comment">
-          <div class="comment-author">TechPrivacyAdvocate</div>
-          <div class="comment-meta">Posted 5 days ago | 37 upvotes</div>
-          <div class="comment-text">Finally! We need these protections to match the EU's GDPR. The opt-in requirements will force companies to be transparent about data collection.</div>
-        </div>
-        
-        <div class="comment">
-          <div class="comment-author">SmallBizOwner</div>
-          <div class="comment-meta">Posted 4 days ago | 12 upvotes</div>
-          <div class="comment-text">The compliance costs worry me. Small businesses might struggle with these requirements - we need exemptions or support programs.</div>
-        </div>
-      </div>
-      
-      <button class="back-button" onclick="hideWiki()">Back to Legislation</button>
-    </div>
-
-    <!-- Other Pages -->
-    <div id="seats" class="page">
-      <h2>Your Districts</h2>
-      <p><strong>Federal:</strong> Congressional District 12</p>
-      <p><strong>State:</strong> Assembly District 5</p>
-      <p><strong>County:</strong> District 3</p>
-      <p><strong>Municipal:</strong> Ward 7</p>
-    </div>
-    
-    <div id="representative" class="page">
-      <h2>Your Representative</h2>
-      <p><strong>Federal:</strong> Rep. Maria Gonzalez (D)</p>
-      <p><strong>State:</strong> Assemblymember James Wilson (R)</p>
-      <p><strong>County:</strong> Supervisor Amy Chen (I)</p>
-      <p><strong>Municipal:</strong> Councilmember David Park (D)</p>
-    </div>
-    
-    <div id="votes" class="page">
-      <h2>Your Voting History</h2>
-      <p>No votes recorded yet</p>
-    </div>
-    
-    <div id="profile" class="page">
-      <h2>My Profile</h2>
-      <p><strong>Name:</strong> User</p>
-      <p><strong>District:</strong> Federal District 12</p>
-      <p><strong>Member Since:</strong> 2024</p>
-      <p><strong>Voting Participation:</strong> 0%</p>
-    </div>
-    
-    <div id="support" class="page">
-      <h2>Support</h2>
-      <p>Email: help@directdemocracy.org</p>
-      <p>Phone: (555) 123-4567</p>
-      <p>Hours: Monday-Friday, 9am-5pm</p>
     </div>
   </div>
 
+  <!-- Wiki Pages -->
+  <div id="wiki-climate" class="wiki">
+    <h2>Climate Action Act</h2>
+    <p>Detailed summary here...</p>
+    <button onclick="hideWiki()">Back</button>
+  </div>
+  
+  <div id="wiki-privacy" class="wiki">
+    <h2>Privacy Protection Act</h2>
+    <p>Detailed summary here...</p>
+    <button onclick="hideWiki()">Back</button>
+  </div>
+
+  <!-- Other Pages -->
+  <div id="seats" class="page">
+    <h2>Your Districts</h2>
+    <p>Federal District 12</p>
+  </div>
+  
+  <div id="profile" class="page">
+    <h2>Your Profile</h2>
+    <p>Member since 2024</p>
+  </div>
+
   <script>
-    // Navigation
+    // Basic Page Navigation
     function showPage(pageId) {
-      // Update active nav item
-      document.querySelectorAll('.nav-menu li').forEach(item => {
-        item.classList.remove('active');
-      });
-      document.querySelector(`.nav-menu li[onclick="showPage('${pageId}')"]`).classList.add('active');
-      
       // Hide all pages
       document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
       });
-      
       // Show selected page
       document.getElementById(pageId).classList.add('active');
-    }
-    
-    // Wiki Page Navigation
-    function showWiki(billId) {
-      document.getElementById('legislation').classList.remove('active');
-      document.getElementById(`wiki-${billId}`).classList.add('active');
-    }
-    
-    function hideWiki() {
-      document.querySelectorAll('.wiki-page').forEach(wiki => {
-        wiki.classList.remove('active');
+      // Update nav highlighting
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
       });
-      document.getElementById('legislation').classList.add('active');
+      // Find and activate correct nav item
+      const navItems = document.querySelectorAll('.nav-item');
+      for (let i = 0; i < navItems.length; i++) {
+        if (navItems[i].getAttribute('onclick').includes(pageId)) {
+          navItems[i].classList.add('active');
+          break;
+        }
+      }
     }
+
+    // Wiki Page Navigation
+    function showWiki(wikiId) {
+      document.getElementById(wikiId).style.display = 'block';
+    }
+    function hideWiki() {
+      document.querySelectorAll('.wiki').forEach(wiki => {
+        wiki.style.display = 'none';
+      });
+    }
+
+    // Swipe Functionality
+    const swipeCard = document.getElementById('swipe-card');
+    let startX, moveX;
+    
+    swipeCard.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+    });
+    
+    swipeCard.addEventListener('touchmove', (e) => {
+      moveX = e.touches[0].clientX;
+      const diff = moveX - startX;
+      swipeCard.style.transform = `translateX(${diff}px)`;
+      e.preventDefault();
+    });
+    
+    swipeCard.addEventListener('touchend', () => {
+      const diff = moveX - startX;
+      if (Math.abs(diff) > 100) {
+        swipeCard.textContent = diff > 0 ? "Voted YES ✓" : "Voted NO ✗";
+        swipeCard.style.background = diff > 0 ? "#38a169" : "#e53e3e";
+        swipeCard.style.color = "white";
+      }
+      swipeCard.style.transform = "translateX(0)";
+    });
   </script>
 </body>
 </html>
