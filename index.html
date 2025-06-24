@@ -4,16 +4,13 @@
   <title>Direct Democracy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    /* Simplified CSS to ensure reliability */
-    body { 
+    body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       background: #f5f5f5;
     }
-    .page { display: none; }
-    .active { display: block; }
-    .nav { 
+    .nav {
       background: white;
       padding: 15px;
       display: flex;
@@ -28,30 +25,38 @@
       font-weight: bold;
       border-bottom: 3px solid #1a365d;
     }
+    .page {
+      display: none;
+      padding: 20px;
+    }
+    .active {
+      display: block;
+    }
     .bill {
       background: white;
-      margin: 15px;
+      margin: 15px 0;
       padding: 15px;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+    .bill:hover {
+      background: #f8f9fa;
     }
     .federal { border-left: 5px solid #e53e3e; }
     .state { border-left: 5px solid #38a169; }
     .county { border-left: 5px solid #3182ce; }
-    .municipal { border-left: 5px solid #805ad5; }
-    .clickable { cursor: pointer; }
-    .clickable:hover { background: #f8f9fa; }
-    .wiki { 
+    .wiki {
+      display: none;
+      background: white;
+      padding: 20px;
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: white;
-      padding: 20px;
-      overflow-y: auto;
       z-index: 100;
-      display: none;
+      overflow-y: auto;
     }
   </style>
 </head>
@@ -60,8 +65,9 @@
   <div class="nav">
     <div class="nav-item active" onclick="showPage('home')">Home</div>
     <div class="nav-item" onclick="showPage('legislation')">Legislation</div>
-    <div class="nav-item" onclick="showPage('seats')">Seats</div>
-    <div class="nav-item" onclick="showPage('profile')">Profile</div>
+    <div class="nav-item" onclick="showPage('votes')">My Votes</div>
+    <div class="nav-item" onclick="showPage('representative')">My Rep</div>
+    <div class="nav-item" onclick="showPage('support')">Support</div>
   </div>
 
   <!-- Home Page -->
@@ -72,79 +78,75 @@
 
   <!-- Legislation Page -->
   <div id="legislation" class="page">
-    <div class="bill federal clickable" onclick="showWiki('climate')">
+    <div class="bill federal" onclick="showWiki('climate')">
       <h2>Climate Action Act</h2>
       <p>Establishes renewable energy programs.</p>
       <p><small>Vote by Dec 1, 2024 • 53% participation</small></p>
     </div>
     
-    <div class="bill state clickable" onclick="showWiki('privacy')">
+    <div class="bill state" onclick="showWiki('privacy')">
       <h2>Privacy Protection Act</h2>
       <p>Strengthens data protection laws.</p>
       <p><small>Vote by Nov 20, 2024 • 61% participation</small></p>
     </div>
     
-    <!-- Swipeable Bill -->
-    <div class="bill county" id="swipe-bill">
+    <div class="bill county" onclick="showWiki('parks')">
       <h2>Parks Expansion</h2>
       <p>Funds new parkland acquisition.</p>
       <p><small>Vote by Oct 15, 2024 • 42% participation</small></p>
-      <div id="swipe-area" style="height:60px;background:#f0f4f8;margin-top:10px;position:relative;">
-        <div id="swipe-card" style="position:absolute;width:100%;height:100%;background:white;display:flex;align-items:center;justify-content:center;">
-          Swipe left/right to vote
-        </div>
-      </div>
     </div>
   </div>
 
   <!-- Wiki Pages -->
   <div id="wiki-climate" class="wiki">
     <h2>Climate Action Act</h2>
-    <p>Detailed summary here...</p>
-    <button onclick="hideWiki()">Back</button>
+    <p>This bill establishes funding for renewable energy infrastructure...</p>
+    <button onclick="hideWiki()">Back to Bills</button>
   </div>
   
   <div id="wiki-privacy" class="wiki">
     <h2>Privacy Protection Act</h2>
-    <p>Detailed summary here...</p>
-    <button onclick="hideWiki()">Back</button>
+    <p>This legislation strengthens consumer data protections...</p>
+    <button onclick="hideWiki()">Back to Bills</button>
+  </div>
+  
+  <div id="wiki-parks" class="wiki">
+    <h2>Parks Expansion</h2>
+    <p>Funding for new recreational areas in your county...</p>
+    <button onclick="hideWiki()">Back to Bills</button>
   </div>
 
   <!-- Other Pages -->
-  <div id="seats" class="page">
-    <h2>Your Districts</h2>
-    <p>Federal District 12</p>
+  <div id="votes" class="page">
+    <h2>My Votes</h2>
+    <p>No votes recorded yet</p>
   </div>
   
-  <div id="profile" class="page">
-    <h2>Your Profile</h2>
-    <p>Member since 2024</p>
+  <div id="representative" class="page">
+    <h2>My Representative</h2>
+    <p>Rep. Jane Smith (District 12)</p>
+  </div>
+  
+  <div id="support" class="page">
+    <h2>Support</h2>
+    <p>Email: help@directdemocracy.org</p>
   </div>
 
   <script>
-    // Basic Page Navigation
+    // Page Navigation
     function showPage(pageId) {
-      // Hide all pages
       document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
       });
-      // Show selected page
       document.getElementById(pageId).classList.add('active');
-      // Update nav highlighting
+      
       document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
       });
-      // Find and activate correct nav item
-      const navItems = document.querySelectorAll('.nav-item');
-      for (let i = 0; i < navItems.length; i++) {
-        if (navItems[i].getAttribute('onclick').includes(pageId)) {
-          navItems[i].classList.add('active');
-          break;
-        }
-      }
+      document.querySelector(`.nav-item[onclick="showPage('${pageId}')"]`).classList.add('active');
     }
 
-    // Wiki Page Navigation
+    // Wiki Pages
     function showWiki(wikiId) {
       document.getElementById(wikiId).style.display = 'block';
     }
@@ -153,31 +155,6 @@
         wiki.style.display = 'none';
       });
     }
-
-    // Swipe Functionality
-    const swipeCard = document.getElementById('swipe-card');
-    let startX, moveX;
-    
-    swipeCard.addEventListener('touchstart', (e) => {
-      startX = e.touches[0].clientX;
-    });
-    
-    swipeCard.addEventListener('touchmove', (e) => {
-      moveX = e.touches[0].clientX;
-      const diff = moveX - startX;
-      swipeCard.style.transform = `translateX(${diff}px)`;
-      e.preventDefault();
-    });
-    
-    swipeCard.addEventListener('touchend', () => {
-      const diff = moveX - startX;
-      if (Math.abs(diff) > 100) {
-        swipeCard.textContent = diff > 0 ? "Voted YES ✓" : "Voted NO ✗";
-        swipeCard.style.background = diff > 0 ? "#38a169" : "#e53e3e";
-        swipeCard.style.color = "white";
-      }
-      swipeCard.style.transform = "translateX(0)";
-    });
   </script>
 </body>
 </html>
