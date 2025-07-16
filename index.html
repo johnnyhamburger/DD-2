@@ -1,291 +1,120 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Direct Democracy</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    /* Vertical Navigation */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      display: flex;
-    }
-    .nav-menu {
-      width: 120px;
-      background: white;
-      padding: 20px 10px;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      height: 100vh;
-      position: fixed;
-    }
-    .nav-item {
-      list-style: none;
-      padding: 12px 0;
-      text-align: center;
-      font-size: 14px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-    }
-    .nav-item.active {
-      font-weight: bold;
-      color: #1a365d;
-    }
-    
-    /* Main Content */
-    .main-content {
-      margin-left: 140px;
-      padding: 20px;
-      width: calc(100% - 160px);
-    }
-    
-    /* Bills */
-    .bill {
-      background: white;
-      margin: 15px 0;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .bill:hover {
-      transform: translateY(-2px);
-    }
-    .federal { border-left: 5px solid #e53e3e; }
-    .state { border-left: 5px solid #38a169; }
-    .county { border-left: 5px solid #3182ce; }
-    
-    /* Wiki Pages */
-    .wiki-page {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 140px;
-      right: 0;
-      bottom: 0;
-      background: white;
-      padding: 20px;
-      overflow-y: auto;
-      z-index: 100;
-    }
-    .wiki-content {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .back-btn {
-      padding: 8px 15px;
-      background: #1a365d;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      margin-top: 20px;
-      cursor: pointer;
-    }
-    .comment {
-      padding: 15px;
-      margin: 10px 0;
-      background: #f8f9fa;
-      border-radius: 8px;
-    }
-    .comment-author {
-      font-weight: bold;
-      color: #1a365d;
-    }
-    .comment-date {
-      color: #718096;
-      font-size: 0.8em;
-    }
-    
-    /* Pages */
-    .page {
-      display: none;
-    }
-    .active {
-      display: block;
-    }
-  </style>
-</head>
-<body>
-  <!-- Vertical Navigation -->
-  <div class="nav-menu">
-    <div class="nav-item active" onclick="showPage('home')">Home</div>
-    <div class="nav-item" onclick="showPage('legislation')">Legislation</div>
-    <div class="nav-item" onclick="showPage('votes')">My Votes</div>
-    <div class="nav-item" onclick="showPage('profile')">My Profile</div>
-    <div class="nav-item" onclick="showPage('representative')">My Rep</div>
-    <div class="nav-item" onclick="showPage('support')">Support</div>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main-content">
-    <!-- Home Page -->
-    <div id="home" class="page active">
-      <h1>Direct Democracy</h1>
-      <p>Your voice matters. Vote on the issues that affect you.</p>
-    </div>
-
-    <!-- Legislation Page -->
-    <div id="legislation" class="page">
-      <!-- Clickable Bill 1 -->
-      <div class="bill federal" onclick="showWiki('climate')">
-        <h2>Climate Action Act</h2>
-        <p>Establishes renewable energy programs.</p>
-        <p><small>Vote by Dec 1, 2024 • 53% participation</small></p>
-      </div>
-      
-      <!-- Clickable Bill 2 -->
-      <div class="bill state" onclick="showWiki('privacy')">
-        <h2>Privacy Protection Act</h2>
-        <p>Strengthens data protection laws.</p>
-        <p><small>Vote by Nov 20, 2024 • 61% participation</small></p>
-      </div>
-      
-      <!-- Clickable Bill 3 -->
-      <div class="bill county" onclick="showWiki('parks')">
-        <h2>Parks Expansion</h2>
-        <p>Funds new parkland acquisition.</p>
-        <p><small>Vote by Oct 15, 2024 • 42% participation</small></p>
-      </div>
-    </div>
-
-    <!-- Wiki Page for Climate Bill -->
-    <div id="wiki-climate" class="wiki-page">
-      <div class="wiki-content">
-        <h2>Climate Action and Green Jobs Act</h2>
-        <p><strong>Summary:</strong> This bill allocates $50 billion over 10 years to transition to renewable energy while creating millions of jobs. Key provisions include tax incentives for solar/wind development, worker retraining programs, and grants for affected communities.</p>
-        
-        <h3>Full Text Preview</h3>
-        <p>Section 1: Establishment of Green Jobs Training Program...<br>
-        Section 2: Renewable Energy Tax Credits...<br>
-        Section 3: Fossil Fuel Worker Transition Fund...</p>
-        <button class="back-btn" onclick="hideWiki()">Back to Bills</button>
-        
-        <h3>Community Comments</h3>
-        <div class="comment">
-          <div class="comment-author">Environmentalist123</div>
-          <div class="comment-date">Posted 3 days ago • 42 upvotes</div>
-          <p>This is exactly what we need to combat climate change while supporting workers!</p>
-        </div>
-        <div class="comment">
-          <div class="comment-author">CoalWorker45</div>
-          <div class="comment-date">Posted 2 days ago • 15 upvotes</div>
-          <p>Concerned about the timeline - we need stronger job guarantees before plant closures.</p>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Wiki Page for Privacy Bill -->
-    <div id="wiki-privacy" class="wiki-page">
-      <div class="wiki-content">
-        <h2>Digital Privacy Protection Act</h2>
-        <p><strong>Summary:</strong> Establishes strong consumer data protections requiring explicit opt-in consent before collecting personal information. Creates a Digital Privacy Commission to enforce regulations with significant fines for violations.</p>
-        
-        <h3>Full Text Preview</h3>
-        <p>Section 1: Consumer Data Rights...<br>
-        Section 2: Establishment of Privacy Commission...<br>
-        Section 3: Right to Be Forgotten...</p>
-        <button class="back-btn" onclick="hideWiki()">Back to Bills</button>
-        
-        <h3>Community Comments</h3>
-        <div class="comment">
-          <div class="comment-author">TechPrivacyAdvocate</div>
-          <div class="comment-date">Posted 5 days ago • 37 upvotes</div>
-          <p>Finally! These protections match the EU's GDPR standards we've needed for years.</p>
-        </div>
-        <div class="comment">
-          <div class="comment-author">SmallBizOwner</div>
-          <div class="comment-date">Posted 4 days ago • 12 upvotes</div>
-          <p>The compliance costs worry me - small businesses need support to implement these changes.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Wiki Page for Parks Bill -->
-    <div id="wiki-parks" class="wiki-page">
-      <div class="wiki-content">
-        <h2>County Parks Expansion Initiative</h2>
-        <p><strong>Summary:</strong> Allocates $15 million to acquire 500 acres of new parkland and improve existing facilities with new trails, playgrounds, and picnic areas.</p>
-        
-        <h3>Full Text Preview</h3>
-        <p>Section 1: Land Acquisition Fund...<br>
-        Section 2: Facility Improvement Grants...<br>
-        Section 3: Maintenance Budget...</p>
-        <button class="back-btn" onclick="hideWiki()">Back to Bills</button>
-        
-        <h3>Community Comments</h3>
-        <div class="comment">
-          <div class="comment-author">OutdoorEnthusiast</div>
-          <div class="comment-date">Posted 1 week ago • 28 upvotes</div>
-          <p>This will be amazing for families and outdoor recreation in our county!</p>
-        </div>
-        <div class="comment">
-          <div class="comment-author">TaxpayerAdvocate</div>
-          <div class="comment-date">Posted 6 days ago • 8 upvotes</div>
-          <p>Concerned about the ongoing maintenance costs - has this been fully budgeted?</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Other Pages -->
-    <div id="votes" class="page">
-      <h2>My Votes</h2>
-      <p>No votes recorded yet</p>
-    </div>
-    
-    <div id="profile" class="page">
-      <h2>My Profile</h2>
-      <p>Name: User</p>
-      <p>District: Federal District 12</p>
-      <p>Member since: 2024</p>
-    </div>
-    
-    <div id="representative" class="page">
-      <h2>My Representative</h2>
-      <p>Federal: Rep. Maria Gonzalez (D)</p>
-      <p>State: Assemblymember James Wilson (R)</p>
-    </div>
-    
-    <div id="support" class="page">
-      <h2>Support</h2>
-      <p>Email: help@directdemocracy.org</p>
-      <p>Phone: (555) 123-4567</p>
-    </div>
-  </div>
-
-  <script>
-    // Page Navigation
-    function showPage(pageId) {
-      // Hide all pages
-      document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-      });
-      // Show selected page
-      document.getElementById(pageId).classList.add('active');
-      
-      // Update nav highlighting
-      document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-      });
-      document.querySelector(`.nav-item[onclick="showPage('${pageId}')"]`).classList.add('active');
-      
-      // Hide any wiki pages
-      hideWiki();
-    }
-
-    // Wiki Pages
-    function showWiki(wikiId) {
-      document.getElementById(wikiId).style.display = 'block';
-    }
-    function hideWiki() {
-      document.querySelectorAll('.wiki-page').forEach(wiki => {
-        wiki.style.display = 'none';
-      });
-    }
-
-    // Initialize - show home page
-    showPage('home');
-  </script>
-</body>
-</html>
+const appData = {
+    bills: [
+        {
+            id: 'bill-001',
+            type: 'federal', // 'federal', 'state', 'county'
+            title: 'Infrastructure Modernization Act of 2025',
+            deadline: '2025-08-15',
+            participation: 72, // Percentage
+            summary: [
+                "This bipartisan bill proposes a comprehensive overhaul of national infrastructure, allocating significant federal funds to repair aging roads, bridges, and public transit systems. It aims to create thousands of jobs, stimulate local economies, and enhance connectivity across states. Key provisions include funding for high-speed rail development and expanding broadband internet access to rural areas.",
+                "The act emphasizes sustainable development practices, mandating that a portion of the funds be used for environmentally friendly projects, such as electric vehicle charging stations and renewable energy infrastructure. It also includes provisions for cybersecurity upgrades to critical infrastructure networks to protect against modern threats and ensure long-term resilience.",
+                "Critics raise concerns about the bill's total cost and potential for increased national debt, while proponents argue that the long-term economic benefits and improved quality of life for citizens outweigh the initial investment. Public input is crucial to shaping the final implementation of these widespread infrastructure improvements."
+            ],
+            fullTextLink: 'javascript:alert(\'Mock PDF link for Infrastructure Modernization Act.\');',
+            officialComment: {
+                representative: 'Rep. Jane Smith',
+                stance: 'Supports this bill because it will bring much-needed jobs and economic growth to our district, ensuring our roads are safe and our communities are connected with reliable broadband. While the cost is significant, the long-term benefits for American competitiveness and quality of life are immeasurable.',
+                avatar: 'https://via.placeholder.com/40/1A365D/FFFFFF?text=JS' // Example: Rep. Smith's avatar
+            },
+            userComments: [
+                {
+                    id: 'comment-101',
+                    user: 'CivicVoterPro',
+                    avatar: 'https://i.pravatar.cc/40?img=1',
+                    text: 'Finally, a bill that addresses real issues! Our bridges are falling apart. I just hope the funds are distributed fairly.',
+                    upvotes: 24,
+                    downvotes: 2,
+                    date: '2025-07-14T10:30:00Z'
+                },
+                {
+                    id: 'comment-102',
+                    user: 'TaxpayerConcerned',
+                    avatar: 'https://i.pravatar.cc/40?img=2',
+                    text: 'This sounds good on paper, but I worry about the cost and where all this money is truly going to end up. We need more transparency on project selection.',
+                    upvotes: 15,
+                    downvotes: 8,
+                    date: '2025-07-14T11:45:00Z'
+                },
+                {
+                    id: 'comment-103',
+                    user: 'GreenFutureNow',
+                    avatar: 'https://i.pravatar.cc/40?img=3',
+                    text: 'Excited about the focus on sustainable infrastructure. This is a crucial step towards a greener future for our country.',
+                    upvotes: 30,
+                    downvotes: 1,
+                    date: '2025-07-14T13:10:00Z'
+                },
+                 {
+                    id: 'comment-104',
+                    user: 'RuralConnect',
+                    avatar: 'https://i.pravatar.cc/40?img=4',
+                    text: 'Broadband for rural areas is a game changer! My community has been waiting for this for years. This bill could transform lives.',
+                    upvotes: 28,
+                    downvotes: 0,
+                    date: '2025-07-14T15:00:00Z'
+                },
+            ]
+        },
+        {
+            id: 'bill-002',
+            type: 'state',
+            title: 'State Education Reform Bill (HB 105)',
+            deadline: '2025-08-20',
+            participation: 55,
+            summary: ["..."], // Shorter summary for mock
+            fullTextLink: 'javascript:alert(\'Mock PDF link for State Education Reform Bill.\');',
+            officialComment: {
+                representative: 'State Sen. David Lee',
+                stance: 'Strongly supports improving our state\'s public education system...',
+                avatar: 'https://via.placeholder.com/40/1A365D/FFFFFF?text=DL'
+            },
+            userComments: []
+        },
+        {
+            id: 'bill-003',
+            type: 'county',
+            title: 'County Park Development Initiative',
+            deadline: '2025-09-01',
+            participation: 30,
+            summary: ["..."], // Shorter summary for mock
+            fullTextLink: 'javascript:alert(\'Mock PDF link for County Park Development Initiative.\');',
+            officialComment: {
+                representative: 'County Commissioner Ana Rodriguez',
+                stance: 'This initiative will create much-needed green spaces...',
+                avatar: 'https://via.placeholder.com/40/1A365D/FFFFFF?text=AR'
+            },
+            userComments: []
+        },
+        {
+            id: 'bill-004',
+            type: 'federal',
+            title: 'National Cybersecurity Enhancement Act',
+            deadline: '2025-09-10',
+            participation: 68,
+            summary: ["..."], // Shorter summary for mock
+            fullTextLink: 'javascript:alert(\'Mock PDF link for National Cybersecurity Enhancement Act.\');',
+            officialComment: {
+                representative: 'Rep. Mark Jones',
+                stance: 'Protecting our digital infrastructure is paramount...',
+                avatar: 'https://via.placeholder.com/40/1A365D/FFFFFF?text=MJ'
+            },
+            userComments: []
+        },
+        {
+            id: 'bill-005',
+            type: 'state',
+            title: 'Clean Water Infrastructure Bill (SB 210)',
+            deadline: '2025-09-25',
+            participation: 48,
+            summary: ["..."], // Shorter summary for mock
+            fullTextLink: 'javascript:alert(\'Mock PDF link for Clean Water Infrastructure Bill.\');',
+            officialComment: {
+                representative: 'State Rep. Emily Chen',
+                stance: 'Ensuring access to clean, safe drinking water is a basic right...',
+                avatar: 'https://via.placeholder.com/40/1A365D/FFFFFF?text=EC'
+            },
+            userComments: []
+        }
+    ]
+};
