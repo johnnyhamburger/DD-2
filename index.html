@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Direct Democracy App</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Inter font from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Three.js CDN for the map -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body {
@@ -156,11 +153,40 @@
             opacity: 1;
             visibility: visible;
         }
+
+        /* Budget specific colors */
+        .funding-red { background-color: #F44336; color: white; } /* Critically Underfunded */
+        .funding-yellow { background-color: #FFC107; color: black; } /* Under Optimal */
+        .funding-green { background-color: #4CAF50; color: white; } /* Near Optimal */
+        .funding-blue { background-color: #2196F3; color: white; } /* Overfunded */
+
+        .border-funding-red { border-color: #F44336; }
+        .border-funding-yellow { border-color: #FFC107; }
+        .border-funding-green { border-color: #4CAF50; }
+        .border-funding-blue { border-color: #2196F3; }
+
+        .text-funding-red { color: #F44336; }
+        .text-funding-yellow { color: #FFC107; }
+        .text-funding-green { color: #4CAF50; }
+        .text-funding-blue { color: #2196F3; }
+
+        .budget-branch-button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .budget-branch-button:hover {
+            background-color: #e0e0e0;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <!-- Sidebar Navigation -->
     <nav id="sidebar" class="sidebar fixed top-0 left-0 h-full bg-white shadow-lg flex flex-col p-4 md:p-6">
         <button id="close-sidebar" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 focus:outline-none" aria-label="Close navigation menu">
             <i class="fas fa-times"></i>
@@ -170,6 +196,7 @@
             <ul class="space-y-4">
                 <li><a href="#" data-page="home" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Go to Home page"><i class="fas fa-home mr-3"></i>Home</a></li>
                 <li><a href="#" data-page="legislation" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Go to Legislation page"><i class="fas fa-gavel mr-3"></i>Legislation</a></li>
+                <li><a href="#" data-page="budget" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Go to Budget page"><i class="fas fa-money-bill-wave mr-3"></i>Budget</a></li>
                 <li><a href="#" data-page="my-votes" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Go to My Votes page"><i class="fas fa-check-square mr-3"></i>My Votes</a></li>
                 <li><a href="#" data-page="my-profile" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Go to My Profile page"><i class="fas fa-user-circle mr-3"></i>My Profile</a></li>
                 <li><a href="#" data-page="my-rep" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Go to My Representative page"><i class="fas fa-user-tie mr-3"></i>My Rep</a></li>
@@ -178,35 +205,26 @@
         </div>
     </nav>
 
-    <!-- Overlay -->
     <div id="overlay" class="overlay fixed inset-0"></div>
 
-    <!-- Main Content Area -->
     <div id="main-content" class="flex-grow flex flex-col transition-all duration-300 ease-in-out">
-        <!-- Top Bar -->
         <header class="bg-navy-dark text-white p-4 shadow-md flex items-center justify-between">
             <button id="open-sidebar" class="text-white text-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-md p-1" aria-label="Open navigation menu">
                 <i class="fas fa-bars"></i>
             </button>
             <h1 class="text-xl font-semibold">Direct Democracy</h1>
-            <div class="w-8"></div> <!-- Placeholder for alignment -->
-        </header>
+            <div class="w-8"></div> </header>
 
-        <!-- Page Content -->
         <main class="flex-grow p-4 overflow-y-auto">
-            <!-- Home Page (Mock News Feed) -->
             <section id="home-page" class="page hidden">
                 <h2 class="text-3xl font-bold text-navy-dark mb-6">Your Updates</h2>
                 <div id="news-feed-list" class="space-y-6">
-                    <!-- News items will be dynamically loaded here -->
-                </div>
+                    </div>
             </section>
 
-            <!-- Legislation Page -->
             <section id="legislation-page" class="page hidden">
                 <h2 class="text-3xl font-bold text-navy-dark mb-6">Active Legislation</h2>
 
-                <!-- Swipe Voting Bill -->
                 <div id="swipe-bill-container" class="swipe-card-container relative w-full max-w-md mx-auto mb-6 bg-white rounded-xl shadow-lg overflow-hidden">
                     <div id="swipe-bill-vote-yes" class="vote-indicator yes"><i class="fas fa-check"></i></div>
                     <div id="swipe-bill-vote-no" class="vote-indicator no"><i class="fas fa-times"></i></div>
@@ -221,13 +239,10 @@
                     </div>
                 </div>
 
-                <!-- Other Bills -->
                 <div id="other-bills-list" class="space-y-4">
-                    <!-- Bills will be dynamically loaded here -->
-                </div>
+                    </div>
             </section>
 
-            <!-- Bill Detail Page -->
             <section id="bill-detail-page" class="page hidden">
                 <header class="flex items-center mb-4">
                     <button id="back-to-legislation" class="text-navy-dark text-2xl mr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1" aria-label="Back to Legislation list">
@@ -244,7 +259,6 @@
 
                 <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
                     <h3 class="text-xl font-semibold text-navy-dark mb-4">Comment Board</h3>
-                    <!-- Pinned Official Comment -->
                     <div id="official-comment" class="bg-navy-dark text-white p-4 rounded-lg mb-4 shadow-inner">
                         <div class="flex items-center mb-2">
                             <img id="official-avatar" class="w-10 h-10 rounded-full mr-3 border-2 border-white" alt="Representative's Avatar">
@@ -254,23 +268,88 @@
                         <p class="text-base" id="official-stance"></p>
                     </div>
 
-                    <!-- User Comments -->
                     <div id="user-comments-list" class="space-y-4">
-                        <!-- Comments will be dynamically loaded here -->
-                    </div>
+                        </div>
                 </div>
             </section>
 
-            <!-- My Votes Page -->
+            <section id="budget-page" class="page hidden">
+                <h2 class="text-3xl font-bold text-navy-dark mb-6">Budgets for Your Area</h2>
+                <div id="budgets-list" class="space-y-4">
+                    </div>
+            </section>
+
+            <section id="budget-detail-page" class="page hidden">
+                <header class="flex items-center mb-4">
+                    <button id="back-to-budgets" class="text-navy-dark text-2xl mr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1" aria-label="Back to Budgets list">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-navy-dark" id="budget-detail-title"></h2>
+                </header>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-semibold text-navy-dark mb-3">Your Virtual Wallet</h3>
+                    <p class="text-gray-700 text-2xl font-bold mb-4">$<span id="wallet-amount">0.00</span></p>
+                    <p class="text-gray-500 text-sm">Allocate your portion of the budget to areas that matter most to you.</p>
+                </div>
+
+                <h3 class="text-xl font-semibold text-navy-dark mb-4">Budget Branches</h3>
+                <div id="budget-branches-list" class="space-y-4">
+                    </div>
+            </section>
+
+            <section id="department-detail-page" class="page hidden">
+                <header class="flex items-center mb-4">
+                    <button id="back-to-budget-branches" class="text-navy-dark text-2xl mr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1" aria-label="Back to Budget Branches">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-navy-dark" id="department-branch-title"></h2>
+                </header>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6 flex flex-col md:flex-row items-center justify-center">
+                    <div class="relative w-48 h-48 md:w-64 md:h-64 mb-4 md:mb-0 md:mr-6">
+                        <canvas id="department-pie-chart" class="w-full h-full"></canvas>
+                        <div class="absolute inset-0 flex items-center justify-center text-center">
+                            <span class="text-xl font-bold text-navy-dark">Total: $<span id="branch-total-contributed">0</span></span>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-semibold text-navy-dark mb-2">Branch Funding Status:</h3>
+                        <span id="branch-funding-status" class="px-4 py-2 rounded-full text-lg font-bold"></span>
+                    </div>
+                </div>
+
+                <div id="pie-chart-legend" class="bg-white rounded-xl shadow-lg p-4 mt-6">
+                    <h4 class="text-lg font-semibold text-navy-dark mb-3">Legend</h4>
+                    <div id="legend-items" class="space-y-2">
+                        </div>
+                </div>
+
+                <h3 class="text-xl font-semibold text-navy-dark mb-4 mt-6">Departments</h3>
+                <div id="departments-list" class="space-y-4">
+                    </div>
+            </section>
+
+            <section id="budget-proposal-review-page" class="page hidden">
+                <header class="flex items-center mb-4">
+                    <button id="back-to-legislation-from-budget-proposal" class="text-navy-dark text-2xl mr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1" aria-label="Back to Legislation list">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-navy-dark" id="budget-proposal-title"></h2>
+                </header>
+
+                <div id="budget-proposal-branches-list" class="space-y-4">
+                    </div>
+            </section>
+
+
             <section id="my-votes-page" class="page hidden">
                 <h2 class="text-3xl font-bold text-navy-dark mb-6">My Voting History</h2>
                 <div id="my-votes-list" class="space-y-4">
-                    <!-- My votes will be dynamically loaded here -->
                     <p class="text-gray-600" id="no-votes-message">You haven't cast any votes yet.</p>
                 </div>
             </section>
 
-            <!-- My Profile Page -->
             <section id="my-profile-page" class="page hidden">
                 <h2 class="text-3xl font-bold text-navy-dark mb-6">My Profile</h2>
                 <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -305,7 +384,6 @@
                 </div>
             </section>
 
-            <!-- My Representatives Page -->
             <section id="my-rep-page" class="page hidden">
                 <h2 class="text-3xl font-bold text-navy-dark mb-6">My Representatives</h2>
                 <div id="map-container" class="relative bg-white rounded-xl shadow-lg mb-6">
@@ -322,11 +400,9 @@
                     </div>
                 </div>
                 <div id="my-reps-list" class="space-y-6">
-                    <!-- Representatives details will be dynamically loaded here below the map -->
-                </div>
+                    </div>
             </section>
 
-            <!-- Support Page (Placeholder) -->
             <section id="support-page" class="page hidden">
                 <h2 class="text-3xl font-bold text-navy-dark mb-6">Support</h2>
                 <p class="text-gray-700">Need help? Contact us or check our FAQs.</p>
@@ -403,6 +479,29 @@
                             downvotes: 0,
                             date: '2025-07-14T15:00:00Z'
                         },
+                    ]
+                },
+                {
+                    id: 'federal-budget-2026',
+                    type: 'federal',
+                    title: 'Proposed Federal Budget 2026',
+                    deadline: '2025-09-30',
+                    participation: 65,
+                    isBudgetProposal: true, // Flag to identify this as a budget proposal
+                    summary: [
+                        "This is the proposed federal budget for Fiscal Year 2026. It outlines the government's planned spending and revenue for the upcoming year across all major federal functions, from defense to social programs. This proposal aims to balance national priorities with fiscal responsibility, addressing key challenges while ensuring sustainable growth.",
+                        "Key allocations include significant investments in national security, healthcare infrastructure, and climate change initiatives. It also details funding for research and development, education, and support for small businesses. The budget reflects current administration priorities and economic forecasts.",
+                        "Constituents are encouraged to review the proposed allocations and provide their input. Your feedback is crucial in shaping how public funds are utilized to best serve the nation's needs. This budget is currently under review by Congress and subject to amendments."
+                    ],
+                    fullTextLink: 'javascript:alert(\'Mock PDF link for Proposed Federal Budget 2026.\');',
+                    officialComment: {
+                        representative: 'Sen. John Doe (Budget Committee)',
+                        stance: 'This budget proposal represents a balanced approach to our nation\'s needs, prioritizing economic stability and strategic investments for the future. We believe it addresses critical areas while maintaining fiscal prudence.',
+                        avatar: 'https://placehold.co/40x40/1A365D/FFFFFF?text=JD'
+                    },
+                    userComments: [
+                        { id: 'comment-b1', user: 'FiscalHawk', avatar: 'https://i.pravatar.cc/40?img=13', text: 'Concerned about the deficit. We need more cuts, not more spending, even in vital areas.', upvotes: 10, downvotes: 5, date: '2025-09-01T09:00:00Z' },
+                        { id: 'comment-b2', user: 'ProgressiveVoice', avatar: 'https://i.pravatar.cc/40?img=14', text: 'More funding needed for social safety nets and renewable energy. This budget doesn\'t go far enough.', upvotes: 12, downvotes: 3, date: '2025-09-02T11:00:00Z' }
                     ]
                 },
                 {
@@ -589,8 +688,133 @@
                     avatar: 'https://placehold.co/60x60/1A365D/FFFFFF?text=MB',
                     mapCoords: { lat: 30.2672, lon: -97.7431, city: 'Austin' } // Mock coords for a US city
                 }
+            ],
+
+            budgets: [
+                {
+                    id: 'travis-county-budget',
+                    type: 'county',
+                    name: 'Travis County Budget',
+                    totalBudget: 1500000000, // $1.5 Billion
+                    appConstituents: 10000, // Mock number of app users in this county
+                    branches: [
+                        {
+                            id: 'public-safety',
+                            name: 'Public Safety',
+                            criticalFunding: 300000000, // $300M
+                            optimalFunding: 400000000, // $400M
+                            proposedBudget: 380000000, // For budget proposal comparison
+                            departments: [
+                                { id: 'sheriff-dept', name: 'Sheriff\'s Department', proposedBudget: 200000000, criticalFunding: 180000000, optimalFunding: 220000000 },
+                                { id: 'fire-ems', name: 'Fire & EMS', proposedBudget: 100000000, criticalFunding: 90000000, optimalFunding: 110000000 },
+                                { id: 'judicial-services', name: 'Judicial Services', proposedBudget: 50000000, criticalFunding: 45000000, optimalFunding: 55000000 },
+                                { id: 'emergency-mgmt', name: 'Emergency Management', proposedBudget: 30000000, criticalFunding: 25000000, optimalFunding: 35000000 }
+                            ]
+                        },
+                        {
+                            id: 'transportation',
+                            name: 'Transportation',
+                            criticalFunding: 150000000,
+                            optimalFunding: 200000000,
+                            proposedBudget: 180000000, // For budget proposal comparison
+                            departments: [
+                                { id: 'roads-bridges', name: 'Roads & Bridges', proposedBudget: 120000000, criticalFunding: 100000000, optimalFunding: 130000000 },
+                                { id: 'public-transit', name: 'Public Transit', proposedBudget: 60000000, criticalFunding: 50000000, optimalFunding: 70000000 },
+                            ]
+                        },
+                        { id: 'education', name: 'Education', criticalFunding: 200000000, optimalFunding: 250000000, proposedBudget: 230000000, departments: [] },
+                        { id: 'health-human-services', name: 'Health & Human Services', criticalFunding: 180000000, optimalFunding: 220000000, proposedBudget: 210000000, departments: [] },
+                        { id: 'parks-recreation', name: 'Parks & Recreation', criticalFunding: 80000000, optimalFunding: 100000000, proposedBudget: 90000000, departments: [] },
+                        { id: 'environmental-protection', name: 'Environmental Protection', criticalFunding: 50000000, optimalFunding: 70000000, proposedBudget: 60000000, departments: [] },
+                        { id: 'economic-development', name: 'Economic Development', criticalFunding: 70000000, optimalFunding: 90000000, proposedBudget: 80000000, departments: [] },
+                        { id: 'housing-community', name: 'Housing & Community Affairs', criticalFunding: 100000000, optimalFunding: 130000000, proposedBudget: 110000000, departments: [] },
+                        { id: 'general-admin', name: 'General Administration', criticalFunding: 60000000, optimalFunding: 80000000, proposedBudget: 70000000, departments: [] },
+                        { id: 'public-works', name: 'Public Works', criticalFunding: 90000000, optimalFunding: 120000000, proposedBudget: 100000000, departments: [] },
+                        { id: 'libraries-culture', name: 'Libraries & Culture', criticalFunding: 30000000, optimalFunding: 40000000, proposedBudget: 35000000, departments: [] },
+                        { id: 'technology-innovation', name: 'Technology & Innovation', criticalFunding: 20000000, optimalFunding: 30000000, proposedBudget: 25000000, departments: [] }
+                    ]
+                },
+                {
+                    id: 'state-budget-2026',
+                    type: 'state',
+                    name: 'State of Texas Budget 2026',
+                    totalBudget: 200000000000, // $200 Billion
+                    appConstituents: 500000,
+                    branches: [] // Not detailed for mock
+                },
+                {
+                    id: 'federal-budget-2025',
+                    type: 'federal',
+                    name: 'Federal Budget 2025',
+                    totalBudget: 6000000000000, // $6 Trillion
+                    appConstituents: 1000000,
+                    branches: [] // Not detailed for mock
+                }
             ]
         };
+
+        // --- User-specific data (loaded from localStorage) ---
+        // Initialize userBudgetContributions from localStorage or as empty object
+        let userBudgetContributions = JSON.parse(localStorage.getItem('userBudgetContributions')) || {
+            'travis-county-budget': {
+                'public-safety': {
+                    total: 10000, // Example contribution to the branch as a whole
+                    departments: {
+                        'sheriff-dept': 5000,
+                        'fire-ems': 3000,
+                        'judicial-services': 1000,
+                        'emergency-mgmt': 500
+                    }
+                },
+                'transportation': {
+                    total: 0,
+                    departments: {
+                        'roads-bridges': 2000,
+                        'public-transit': 1000
+                    }
+                },
+                'education': { total: 0, departments: {} },
+                'health-human-services': { total: 0, departments: {} },
+                'parks-recreation': { total: 0, departments: {} },
+                'environmental-protection': { total: 0, departments: {} },
+                'economic-development': { total: 0, departments: {} },
+                'housing-community': { total: 0, departments: {} },
+                'general-admin': { total: 0, departments: {} },
+                'public-works': { total: 0, departments: {} },
+                'libraries-culture': { total: 0, departments: {} },
+                'technology-innovation': { total: 0, departments: {} }
+            }
+        };
+
+        // Calculate initial wallet amount based on mock data
+        function calculateInitialWallet() {
+            const budgetId = 'travis-county-budget'; // The budget we are detailing
+            const budget = appData.budgets.find(b => b.id === budgetId);
+            if (!budget) return 0;
+
+            const totalBudget = budget.totalBudget;
+            const appConstituents = budget.appConstituents;
+            const perConstituentShare = totalBudget / appConstituents;
+
+            // Sum up all contributions made by the user for this budget
+            let contributedAmount = 0;
+            if (userBudgetContributions[budgetId]) {
+                for (const branchId in userBudgetContributions[budgetId]) {
+                    // Sum direct branch contributions
+                    contributedAmount += userBudgetContributions[budgetId][branchId].total || 0;
+                    // Sum department contributions within the branch
+                    if (userBudgetContributions[budgetId][branchId].departments) {
+                        for (const deptId in userBudgetContributions[budgetId][branchId].departments) {
+                            contributedAmount += userBudgetContributions[budgetId][branchId].departments[deptId] || 0;
+                        }
+                    }
+                }
+            }
+            return Math.max(0, perConstituentShare - contributedAmount); // Wallet cannot be negative
+        }
+
+        let walletAmount = calculateInitialWallet();
+
 
         // --- DOM Elements ---
         const sidebar = document.getElementById('sidebar');
@@ -626,6 +850,31 @@
         const officialStance = document.getElementById('official-stance');
         const userCommentsList = document.getElementById('user-comments-list');
         const backToLegislationBtn = document.getElementById('back-to-legislation');
+
+        const budgetsList = document.getElementById('budgets-list');
+        const budgetDetailPage = document.getElementById('budget-detail-page');
+        const backToBudgetsBtn = document.getElementById('back-to-budgets');
+        const budgetDetailTitle = document.getElementById('budget-detail-title');
+        const walletAmountSpan = document.getElementById('wallet-amount');
+        const budgetBranchesList = document.getElementById('budget-branches-list');
+
+        const departmentDetailPage = document.getElementById('department-detail-page');
+        const backToBudgetBranchesBtn = document.getElementById('back-to-budget-branches');
+        const departmentBranchTitle = document.getElementById('department-branch-title');
+        const departmentPieChart = document.getElementById('department-pie-chart');
+        let departmentPieChartInstance = null; // To hold the Chart.js instance
+        const branchTotalContributedSpan = document.getElementById('branch-total-contributed');
+        const branchFundingStatusSpan = document.getElementById('branch-funding-status');
+        const departmentsList = document.getElementById('departments-list');
+        const pieChartLegend = document.getElementById('pie-chart-legend');
+        const legendItemsContainer = document.getElementById('legend-items');
+
+
+        const budgetProposalReviewPage = document.getElementById('budget-proposal-review-page');
+        const backToLegislationFromBudgetProposalBtn = document.getElementById('back-to-legislation-from-budget-proposal');
+        const budgetProposalTitle = document.getElementById('budget-proposal-title');
+        const budgetProposalBranchesList = document.getElementById('budget-proposal-branches-list');
+
 
         const myVotesList = document.getElementById('my-votes-list');
         const noVotesMessage = document.getElementById('no-votes-message');
@@ -666,7 +915,25 @@
         let isDragging = false;
         const swipeThreshold = 0.3; // 30% of card width for a vote
 
-        // --- Functions ---
+        let currentBudgetId = null;
+        let currentBudgetBranchId = null;
+
+        // --- Helper Functions ---
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
+        }
+
+        function getFundingStatus(current, critical, optimal) {
+            if (current < critical) {
+                return { status: 'Critically Underfunded', class: 'funding-red', textClass: 'text-funding-red', borderClass: 'border-funding-red' };
+            } else if (current < optimal) {
+                return { status: 'Under Optimal Goal', class: 'funding-yellow', textClass: 'text-funding-yellow', borderClass: 'border-funding-yellow' };
+            } else if (current >= optimal && current < optimal * 1.1) { // Within 10% of optimal
+                return { status: 'Near Optimal Goal', class: 'funding-green', textClass: 'text-funding-green', borderClass: 'border-funding-green' };
+            } else {
+                return { status: 'Overfunded', class: 'funding-blue', textClass: 'text-funding-blue', borderClass: 'border-funding-blue' };
+            }
+        }
 
         // Function to show a specific page and hide others
         function showPage(pageId) {
@@ -684,6 +951,8 @@
                 renderHomePage();
             } else if (pageId === 'legislation') {
                 renderLegislationList();
+            } else if (pageId === 'budget') {
+                renderBudgetsList();
             } else if (pageId === 'my-votes') {
                 renderMyVotesPage();
             } else if (pageId === 'my-profile') {
@@ -773,11 +1042,14 @@
                     <h3 class="text-lg font-semibold text-navy-dark mb-1">${bill.title}</h3>
                     <p class="text-sm text-gray-500 mb-2">Voting ends: ${new Date(bill.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                     <div class="flex items-center justify-between text-gray-600">
-                        <span class="text-sm font-medium">Participation: ${bill.participation}%</span>
                         <span class="text-xs font-semibold px-2 py-1 rounded-full text-white" style="background-color: ${bill.type === 'federal' ? '#EF4444' : (bill.type === 'state' ? '#F59E0B' : '#10B981')}">${bill.type.charAt(0).toUpperCase() + bill.type.slice(1)}</span>
                     </div>
                 `;
-                billCard.addEventListener('click', () => showBillDetail(bill.id));
+                if (bill.isBudgetProposal) {
+                    billCard.addEventListener('click', () => showBudgetProposalReview(bill.id));
+                } else {
+                    billCard.addEventListener('click', () => showBillDetail(bill.id));
+                }
                 otherBillsList.appendChild(billCard);
             });
         }
@@ -826,6 +1098,391 @@
 
             showPage('bill-detail');
         }
+
+        // Function to render the Budgets list
+        function renderBudgetsList() {
+            budgetsList.innerHTML = '';
+            appData.budgets.forEach((budget, index) => {
+                const budgetCard = document.createElement('div');
+                budgetCard.className = `bg-white rounded-xl shadow-md p-4 border-l-4 cursor-pointer hover:shadow-lg transition-shadow duration-200`;
+                budgetCard.setAttribute('role', 'button');
+                budgetCard.setAttribute('aria-label', `View details for ${budget.name}`);
+                budgetCard.dataset.budgetId = budget.id;
+
+                // Apply specific border-left-color
+                if (budget.type === 'federal') {
+                    budgetCard.classList.add('federal-bill');
+                } else if (budget.type === 'state') {
+                    budgetCard.classList.add('state-bill');
+                } else if (budget.type === 'county') {
+                    budgetCard.classList.add('county-bill');
+                }
+
+                budgetCard.innerHTML = `
+                    <h3 class="text-lg font-semibold text-navy-dark mb-1">${budget.name}</h3>
+                    <p class="text-sm text-gray-500 mb-2">Total Budget: ${formatCurrency(budget.totalBudget)}</p>
+                    <div class="flex items-center justify-between text-gray-600">
+                        <span class="text-xs font-semibold px-2 py-1 rounded-full text-white" style="background-color: ${budget.type === 'federal' ? '#EF4444' : (budget.type === 'state' ? '#F59E0B' : '#10B981')}">${budget.type.charAt(0).toUpperCase() + budget.type.slice(1)}</span>
+                    </div>
+                `;
+                if (index === 0) { // Only make the top budget clickable for now
+                    budgetCard.addEventListener('click', () => showBudgetDetail(budget.id));
+                } else {
+                    budgetCard.style.cursor = 'default';
+                    budgetCard.classList.remove('hover:shadow-lg');
+                }
+                budgetsList.appendChild(budgetCard);
+            });
+        }
+
+        // Function to render the Budget Detail page (branches)
+        function showBudgetDetail(budgetId) {
+            currentBudgetId = budgetId;
+            const budget = appData.budgets.find(b => b.id === budgetId);
+            if (!budget) return;
+
+            budgetDetailTitle.textContent = budget.name;
+            walletAmountSpan.textContent = formatCurrency(walletAmount).replace('$', ''); // Remove $ for span
+
+            budgetBranchesList.innerHTML = '';
+            budget.branches.forEach(branch => {
+                const branchContributions = (userBudgetContributions[budgetId] && userBudgetContributions[budgetId][branch.id] && userBudgetContributions[budgetId][branch.id].total) || 0;
+                const fundingStatus = getFundingStatus(branchContributions, branch.criticalFunding, branch.optimalFunding);
+
+                const branchDiv = document.createElement('div');
+                branchDiv.className = `bg-white rounded-xl shadow-md p-4 mb-4 border-l-4 ${fundingStatus.borderClass}`;
+                branchDiv.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-navy-dark">${branch.name}</h3>
+                        <span class="text-sm font-medium ${fundingStatus.textClass}">${fundingStatus.status}</span>
+                    </div>
+                    <p class="text-gray-700 text-sm mt-1">Contributed: ${formatCurrency(branchContributions)}</p>
+                    <div class="flex items-center mt-3">
+                        <input type="number" min="0" max="${walletAmount}" value="0" step="1" class="w-24 p-2 border rounded-md text-sm text-gray-800" id="contribute-input-${branch.id}" aria-label="Amount to contribute to ${branch.name}">
+                        <button class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" data-branch-id="${branch.id}" data-type="branch" aria-label="Contribute to ${branch.name}">Contribute</button>
+                        <button class="ml-auto text-blue-600 hover:underline text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1" data-branch-id="${branch.id}" aria-label="View details for ${branch.name}">View Details</button>
+                    </div>
+                `;
+                budgetBranchesList.appendChild(branchDiv);
+
+                // Add event listener for the "Contribute" button
+                const contributeButton = branchDiv.querySelector(`button[data-branch-id="${branch.id}"][data-type="branch"]`);
+                contributeButton.addEventListener('click', handleContribution);
+
+                // Add event listener for "View Details" button (only for the first branch for mock)
+                const viewDetailsButton = branchDiv.querySelector(`button[data-branch-id="${branch.id}"]:not([data-type="branch"])`);
+                if (branch.id === 'public-safety') { // Only Public Safety is clickable for now
+                    viewDetailsButton.addEventListener('click', () => showDepartmentDetail(budgetId, branch.id));
+                } else {
+                    viewDetailsButton.classList.add('hidden'); // Hide for other branches
+                }
+            });
+            showPage('budget-detail');
+        }
+
+        // Function to handle contributions
+        function handleContribution(event) {
+            const branchId = event.target.dataset.branchId;
+            const type = event.target.dataset.type; // 'branch' or 'department'
+            const inputElement = document.getElementById(`contribute-input-${event.target.dataset.departmentId || branchId}`); // Use departmentId if available, else branchId
+            const amount = parseFloat(inputElement.value);
+
+            if (isNaN(amount) || amount <= 0 || amount > walletAmount) {
+                alert('Please enter a valid amount within your wallet balance.');
+                return;
+            }
+
+            // Deduct from wallet
+            walletAmount -= amount;
+
+            // Update userBudgetContributions
+            if (!userBudgetContributions[currentBudgetId]) {
+                userBudgetContributions[currentBudgetId] = {};
+            }
+
+            if (type === 'branch') {
+                if (!userBudgetContributions[currentBudgetId][branchId]) {
+                    userBudgetContributions[currentBudgetId][branchId] = { total: 0, departments: {} };
+                }
+                userBudgetContributions[currentBudgetId][branchId].total += amount;
+            } else if (type === 'department') {
+                const departmentId = event.target.dataset.departmentId;
+                if (!userBudgetContributions[currentBudgetId][currentBudgetBranchId]) {
+                    userBudgetContributions[currentBudgetId][currentBudgetBranchId] = { total: 0, departments: {} };
+                }
+                if (!userBudgetContributions[currentBudgetId][currentBudgetBranchId].departments) {
+                    userBudgetContributions[currentBudgetId][currentBudgetBranchId].departments = {};
+                }
+                userBudgetContributions[currentBudgetId][currentBudgetBranchId].departments[departmentId] = (userBudgetContributions[currentBudgetId][currentBudgetBranchId].departments[departmentId] || 0) + amount;
+            }
+
+            localStorage.setItem('userBudgetContributions', JSON.stringify(userBudgetContributions));
+
+            // Re-render the current page to reflect changes
+            if (type === 'branch') {
+                showBudgetDetail(currentBudgetId);
+            } else if (type === 'department') {
+                showDepartmentDetail(currentBudgetId, currentBudgetBranchId);
+            }
+        }
+
+        // Color palette for pie chart, aligned with Tailwind aesthetics
+        const pieChartColorPalette = [
+            '#38bdf8', // sky-400
+            '#60a5fa', // blue-400
+            '#8b5cf6', // violet-500
+            '#a855f7', // purple-500
+            '#e74694', // pink-500
+            '#f59e0b', // amber-500
+            '#d97706', // orange-600
+            '#34d399', // emerald-400
+            '#10b981', // green-500
+            '#ef4444', // red-500
+            '#fbbf24', // yellow-400
+            '#9ca3af', // gray-400 (for general funds or lesser categories)
+            '#6b7280', // gray-500
+            '#4b5563', // gray-600
+        ];
+
+        function generatePieChartColors(numColors) {
+            const colors = [];
+            for (let i = 0; i < numColors; i++) {
+                colors.push(pieChartColorPalette[i % pieChartColorPalette.length]);
+            }
+            return colors;
+        }
+
+        // Function to render Department Detail page
+        function showDepartmentDetail(budgetId, branchId) {
+            currentBudgetId = budgetId;
+            currentBudgetBranchId = branchId;
+            const budget = appData.budgets.find(b => b.id === budgetId);
+            const branch = budget ? budget.branches.find(br => br.id === branchId) : null;
+            if (!budget || !branch) return;
+
+            departmentBranchTitle.textContent = `${branch.name} Departments`;
+            walletAmountSpan.textContent = formatCurrency(walletAmount).replace('$', '');
+
+            // Calculate total contributed to this branch for overall status
+            const branchContributionsTotal = (userBudgetContributions[budgetId] && userBudgetContributions[budgetId][branchId] && userBudgetContributions[budgetId][branchId].total) || 0;
+            const branchDepartmentsContributions = (userBudgetContributions[budgetId] && userBudgetContributions[budgetId][branchId] && userBudgetContributions[budgetId][branchId].departments) || {};
+            let totalDeptContributions = 0;
+            for (const deptId in branchDepartmentsContributions) {
+                totalDeptContributions += branchDepartmentsContributions[deptId];
+            }
+            const overallBranchContributed = branchContributionsTotal + totalDeptContributions;
+
+            branchTotalContributedSpan.textContent = formatCurrency(overallBranchContributed).replace('$', '');
+            const fundingStatus = getFundingStatus(overallBranchContributed, branch.criticalFunding, branch.optimalFunding);
+            branchFundingStatusSpan.textContent = fundingStatus.status;
+            branchFundingStatusSpan.className = `px-4 py-2 rounded-full text-lg font-bold ${fundingStatus.class}`;
+
+
+            // Render Departments list
+            departmentsList.innerHTML = '';
+            let pieChartLabels = [];
+            let pieChartValues = [];
+            
+            branch.departments.forEach(dept => {
+                const deptContributed = branchDepartmentsContributions[dept.id] || 0;
+                // Only add departments with contributions to the pie chart and list
+                // For the list, always show
+                
+                pieChartLabels.push(dept.name);
+                pieChartValues.push(deptContributed);
+
+                const deptDiv = document.createElement('div');
+                deptDiv.className = 'bg-white rounded-xl shadow-md p-4 mb-4';
+                deptDiv.innerHTML = `
+                    <h3 class="text-lg font-semibold text-navy-dark">${dept.name}</h3>
+                    <p class="text-gray-700 text-sm mt-1">Contributed: ${formatCurrency(deptContributed)}</p>
+                    <div class="flex items-center mt-3">
+                        <input type="number" min="0" max="${walletAmount}" value="0" step="1" class="w-24 p-2 border rounded-md text-sm text-gray-800" id="contribute-input-${dept.id}" aria-label="Amount to contribute to ${dept.name}">
+                        <button class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" data-branch-id="${branch.id}" data-department-id="${dept.id}" data-type="department" aria-label="Contribute to ${dept.name}">Contribute</button>
+                    </div>
+                `;
+                departmentsList.appendChild(deptDiv);
+
+                const contributeButton = deptDiv.querySelector(`button[data-department-id="${dept.id}"]`);
+                contributeButton.addEventListener('click', handleContribution);
+            });
+
+            // Add "General Funds" to pie chart for remaining branch contributions (if any)
+            if (branchContributionsTotal > 0 || pieChartValues.reduce((a, b) => a + b, 0) === 0) {
+                 // Only add general funds if there's actual contribution or if no other departments have contributions
+                pieChartLabels.push('General Funds');
+                pieChartValues.push(branchContributionsTotal);
+            }
+
+            // Generate colors
+            const pieColors = generatePieChartColors(pieChartLabels.length);
+
+            // Destroy existing chart instance before creating a new one
+            if (departmentPieChartInstance) {
+                departmentPieChartInstance.destroy();
+            }
+
+            // Draw Pie Chart using Chart.js
+            departmentPieChartInstance = new Chart(departmentPieChart, {
+                type: 'pie',
+                data: {
+                    labels: pieChartLabels,
+                    datasets: [{
+                        data: pieChartValues,
+                        backgroundColor: pieColors,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Allow flexibility in size
+                    plugins: {
+                        legend: {
+                            display: false, // We'll create a custom legend below
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += formatCurrency(context.parsed);
+                                        // Calculate percentage if total is not zero
+                                        const total = pieChartValues.reduce((sum, val) => sum + val, 0);
+                                        if (total > 0) {
+                                            const percentage = (context.parsed / total * 100).toFixed(1);
+                                            label += ` (${percentage}%)`;
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Render Pie Chart Custom Legend
+            legendItemsContainer.innerHTML = '';
+            pieChartLabels.forEach((label, index) => {
+                const total = pieChartValues.reduce((sum, val) => sum + val, 0);
+                const percentage = total > 0 ? (pieChartValues[index] / total * 100).toFixed(1) : 0;
+                const legendItem = document.createElement('div');
+                legendItem.className = 'flex items-center';
+                legendItem.innerHTML = `
+                    <span class="w-4 h-4 rounded-full mr-2" style="background-color: ${pieColors[index]}"></span>
+                    <span class="text-gray-700 text-sm">${label} (${formatCurrency(pieChartValues[index])}) - ${percentage}%</span>
+                `;
+                legendItemsContainer.appendChild(legendItem);
+            });
+
+            showPage('department-detail');
+        }
+
+
+        // Function to render Budget Proposal Review page
+        function showBudgetProposalReview(billId) {
+            const budgetProposalBill = appData.bills.find(b => b.id === billId && b.isBudgetProposal);
+            if (!budgetProposalBill) return;
+
+            budgetProposalTitle.textContent = budgetProposalBill.title;
+            budgetProposalBranchesList.innerHTML = '';
+
+            const detailedBudget = appData.budgets.find(b => b.id === 'travis-county-budget'); // Assuming this is the detailed budget for comparison
+            if (!detailedBudget) {
+                budgetProposalBranchesList.innerHTML = '<p class="text-gray-600">Detailed budget data not available for comparison.</p>';
+                showPage('budget-proposal-review');
+                return;
+            }
+
+            detailedBudget.branches.forEach(branch => {
+                const userDesiredBranchTotal = (userBudgetContributions[detailedBudget.id] && userBudgetContributions[detailedBudget.id][branch.id] && userBudgetContributions[detailedBudget.id][branch.id].total) || 0;
+                const userDesiredDepartmentsTotal = (userBudgetContributions[detailedBudget.id] && userBudgetContributions[detailedBudget.id][branch.id] && userBudgetContributions[detailedBudget.id][branch.id].departments) || {};
+                let totalUserDesiredForBranch = userDesiredBranchTotal;
+                for (const deptId in userDesiredDepartmentsTotal) {
+                    totalUserDesiredForBranch += userDesiredDepartmentsTotal[deptId];
+                }
+
+                const variance = ((branch.proposedBudget - totalUserDesiredForBranch) / branch.proposedBudget) * 100;
+                const varianceStatus = getVarianceStatus(variance);
+
+                const branchDiv = document.createElement('div');
+                branchDiv.className = `bg-white rounded-xl shadow-md p-4 mb-4 border-l-4 ${varianceStatus.borderClass}`;
+                branchDiv.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-navy-dark">${branch.name}</h3>
+                        <span class="text-sm font-medium ${varianceStatus.textClass}">Variance: ${variance.toFixed(1)}% (${varianceStatus.status})</span>
+                    </div>
+                    <p class="text-gray-700 text-sm mt-1">Proposed: ${formatCurrency(branch.proposedBudget)}</p>
+                    <p class="text-gray-700 text-sm">Your Desired: ${formatCurrency(totalUserDesiredForBranch)}</p>
+                    <button class="mt-2 text-blue-600 hover:underline text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1" data-branch-id="${branch.id}" data-type="proposal-branch" aria-label="View department details for ${branch.name} proposal">View Departments</button>
+                    <div id="proposal-departments-${branch.id}" class="mt-4 space-y-2 hidden"></div>
+                `;
+                budgetProposalBranchesList.appendChild(branchDiv);
+
+                const viewDepartmentsButton = branchDiv.querySelector(`button[data-type="proposal-branch"]`);
+                viewDepartmentsButton.addEventListener('click', (e) => {
+                    const targetBranchId = e.target.dataset.branchId;
+                    const departmentContainer = document.getElementById(`proposal-departments-${targetBranchId}`);
+                    if (departmentContainer.classList.contains('hidden')) {
+                        renderProposalDepartments(targetBranchId, departmentContainer);
+                        departmentContainer.classList.remove('hidden');
+                        e.target.textContent = 'Hide Departments';
+                    } else {
+                        departmentContainer.classList.add('hidden');
+                        e.target.textContent = 'View Departments';
+                    }
+                });
+            });
+
+            showPage('budget-proposal-review');
+        }
+
+        function renderProposalDepartments(branchId, container) {
+            container.innerHTML = ''; // Clear previous departments
+            const budget = appData.budgets.find(b => b.id === 'travis-county-budget');
+            const branch = budget.branches.find(b => b.id === branchId);
+
+            if (!branch || !branch.departments || branch.departments.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm">No detailed departments for this branch.</p>';
+                return;
+            }
+
+            branch.departments.forEach(dept => {
+                const userDesiredDept = (userBudgetContributions[budget.id] && userBudgetContributions[budget.id][branch.id] && userBudgetContributions[budget.id][branch.id].departments && userBudgetContributions[budget.id][branch.id].departments[dept.id]) || 0;
+                const variance = ((dept.proposedBudget - userDesiredDept) / dept.proposedBudget) * 100;
+                const varianceStatus = getVarianceStatus(variance);
+
+                const deptDiv = document.createElement('div');
+                deptDiv.className = `bg-gray-50 rounded-lg p-3 border-l-2 ${varianceStatus.borderClass}`;
+                deptDiv.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-base font-semibold text-navy-dark">${dept.name}</h4>
+                        <span class="text-xs font-medium ${varianceStatus.textClass}">Variance: ${variance.toFixed(1)}%</span>
+                    </div>
+                    <p class="text-gray-600 text-sm">Proposed: ${formatCurrency(dept.proposedBudget)}</p>
+                    <p class="text-gray-600 text-sm">Your Desired: ${formatCurrency(userDesiredDept)}</p>
+                `;
+                container.appendChild(deptDiv);
+            });
+        }
+
+        function getVarianceStatus(variance) {
+            if (variance >= 20) { // Proposed is 20% or more higher than desired
+                return { status: 'Significantly Over', class: 'funding-blue', textClass: 'text-funding-blue', borderClass: 'border-funding-blue' };
+            } else if (variance > 5) { // Proposed is 5-20% higher
+                return { status: 'Moderately Over', class: 'funding-green', textClass: 'text-funding-green', borderClass: 'border-funding-green' };
+            } else if (variance <= -20) { // Proposed is 20% or more lower than desired
+                return { status: 'Significantly Under', class: 'funding-red', textClass: 'text-funding-red', borderClass: 'border-funding-red' };
+            } else if (variance < -5) { // Proposed is 5-20% lower
+                return { status: 'Moderately Under', class: 'funding-yellow', textClass: 'text-funding-yellow', borderClass: 'border-funding-yellow' };
+            } else { // Within -5% to 5%
+                return { status: 'Near Match', class: 'funding-green', textClass: 'text-funding-green', borderClass: 'border-funding-green' };
+            }
+        }
+
 
         // Function to render My Votes page
         function renderMyVotesPage() {
@@ -879,14 +1536,14 @@
             // Education
             profileEducation.innerHTML = '';
             profile.education.forEach(edu => {
-                const li = document.createElement('li');
-                li.className = 'border-b border-gray-200 pb-2 last:border-b-0';
-                li.innerHTML = `
-                    <p class="font-semibold text-navy-dark">${edu.degree}</p>
-                    <p class="text-sm text-gray-600">${edu.institution}, ${edu.years}</p>
-                `;
-                profileEducation.appendChild(li);
-            });
+                    const li = document.createElement('li');
+                    li.className = 'border-b border-gray-200 pb-2 last:border-b-0';
+                    li.innerHTML = `
+                        <p class="font-semibold text-navy-dark">${edu.degree}</p>
+                        <p class="text-sm text-gray-600">${edu.institution}, ${edu.years}</p>
+                    `;
+                    profileEducation.appendChild(li);
+                });
 
             // Skills
             profileSkills.innerHTML = '';
@@ -1181,8 +1838,16 @@
             });
         });
 
-        // Back button on bill detail page
-        backToLegislationBtn.addEventListener('click', () => {
+        // Back buttons for budget pages
+        backToBudgetsBtn.addEventListener('click', () => {
+            showPage('budget');
+        });
+
+        backToBudgetBranchesBtn.addEventListener('click', () => {
+            showBudgetDetail(currentBudgetId);
+        });
+
+        backToLegislationFromBudgetProposalBtn.addEventListener('click', () => {
             showPage('legislation');
         });
 
@@ -1277,7 +1942,12 @@
         swipeBillCard.addEventListener('click', (e) => {
             // Only trigger if not actively dragging to prevent conflict with swipe
             if (!isDragging && Math.abs(currentX - startX) < 10) { // Small threshold to ignore accidental taps during drag attempts
-                showBillDetail(appData.bills[0].id);
+                const firstBill = appData.bills[0];
+                if (firstBill.isBudgetProposal) {
+                    showBudgetProposalReview(firstBill.id);
+                } else {
+                    showBillDetail(firstBill.id);
+                }
             }
         });
 
@@ -1288,12 +1958,6 @@
         });
 
         window.onload = function() {
-            // This ensures the map is initialized only after the DOM is fully loaded,
-            // which is important for the canvas element to be available.
-            // The showPage('home') call in DOMContentLoaded will handle initial rendering.
-            // If the user navigates directly to 'my-rep', initMap will be called there.
-            // For a robust app, you'd want to ensure initMap is only called once.
-            // For this mockup, it's fine as it will re-initialize if you navigate away and back.
             animateMap(); // Start the Three.js animation loop
         };
 
